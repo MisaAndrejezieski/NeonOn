@@ -1,17 +1,13 @@
-# Sistema
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Editor
 .vscode/
 .idea/
 
-# SO
 *.tmp
 *.swp
 ~$*
 
-# Projeto (caso adicione depois)
 node_modules/
 .env
