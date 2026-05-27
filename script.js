@@ -1,9 +1,3 @@
-// ============================================
-// NeonOn - Player de Vídeos
-// Lógica: carregamento de pasta, navegação, playback
-// ============================================
-
-// --- Elementos DOM ---
 const videoPlayer = document.getElementById('videoPlayer');
 const videoContainer = document.getElementById('videoContainer');
 const videoList = document.getElementById('videoList');
@@ -19,13 +13,11 @@ const btnNext = document.getElementById('btnNext');
 const btnFullscreen = document.getElementById('btnFullscreen');
 const volumeSlider = document.getElementById('volumeSlider');
 
-// --- Estado ---
 let videos = [];
 let currentIndex = -1;
 let autoplay = true;
 let currentFolder = null;
 
-// --- Configuração (localStorage) ---
 const CONFIG_KEY = 'neonon_config';
 
 function loadConfig() {
@@ -39,7 +31,7 @@ function loadConfig() {
             updateAutoplayButton();
         }
     } catch (e) {
-        // Config corrompida, usa defaults
+        console.log('Config resetada para padrões.');
     }
 }
 
@@ -51,7 +43,6 @@ function saveConfig() {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
 }
 
-// --- Seleção de Pasta ---
 btnSelectFolder.addEventListener('click', selectFolder);
 
 async function selectFolder() {
@@ -80,7 +71,6 @@ async function loadVideosFromFolder(dirHandle) {
         }
     }
     
-    // Ordenar alfabeticamente
     videos.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
     
     updateVideoList();
@@ -110,7 +100,6 @@ function updateVideoList() {
     videoCounter.textContent = `${videos.length} vídeo${videos.length > 1 ? 's' : ''}`;
 }
 
-// --- Playback ---
 async function playVideo(index) {
     if (index < 0 || index >= videos.length) return;
     
@@ -121,7 +110,6 @@ async function playVideo(index) {
         const fileData = await file.getFile();
         const url = URL.createObjectURL(fileData);
         
-        // Limpar URL anterior
         if (videoPlayer.src) {
             URL.revokeObjectURL(videoPlayer.src);
         }
@@ -137,6 +125,11 @@ async function playVideo(index) {
         
         videoPlayer.play();
         updatePlayButton();
+        
+        videoPlayer.addEventListener('loadedmetadata', () => {
+            videoPlayer.style.maxWidth = '100%';
+            videoPlayer.style.maxHeight = '100%';
+        }, { once: true });
         
     } catch (err) {
         console.error('Erro ao carregar vídeo:', err);
@@ -155,7 +148,6 @@ function highlightCurrentInList() {
     });
 }
 
-// --- Controles ---
 btnPlay.addEventListener('click', togglePlay);
 videoPlayer.addEventListener('click', togglePlay);
 
@@ -170,9 +162,9 @@ function togglePlay() {
 
 function updatePlayButton() {
     if (videoPlayer.paused) {
-        btnPlay.innerHTML = '&#9654;'; // Play
+        btnPlay.innerHTML = '&#9654;';
     } else {
-        btnPlay.innerHTML = '&#10074;&#10074;'; // Pause
+        btnPlay.innerHTML = '&#10074;&#10074;';
     }
 }
 
@@ -191,7 +183,6 @@ function playNext() {
     playVideo(newIndex);
 }
 
-// Autoplay
 btnToggleAutoplay.addEventListener('click', toggleAutoplay);
 
 function toggleAutoplay() {
@@ -222,13 +213,11 @@ videoPlayer.addEventListener('ended', () => {
     }
 });
 
-// Volume
 volumeSlider.addEventListener('input', () => {
     videoPlayer.volume = volumeSlider.value / 100;
     saveConfig();
 });
 
-// Tempo
 videoPlayer.addEventListener('timeupdate', updateTimeDisplay);
 
 function updateTimeDisplay() {
@@ -244,7 +233,6 @@ function formatTime(seconds) {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
-// Fullscreen
 btnFullscreen.addEventListener('click', toggleFullscreen);
 
 function toggleFullscreen() {
@@ -255,7 +243,6 @@ function toggleFullscreen() {
     }
 }
 
-// --- Drag & Drop ---
 document.addEventListener('dragover', (e) => {
     e.preventDefault();
     document.body.classList.add('dragover');
@@ -275,7 +262,6 @@ document.addEventListener('drop', async (e) => {
     const items = e.dataTransfer.items;
     if (!items) return;
     
-    // Procurar por uma pasta
     for (const item of items) {
         if (item.kind === 'file') {
             const entry = await item.getAsFileSystemHandle();
@@ -287,16 +273,13 @@ document.addEventListener('drop', async (e) => {
         }
     }
     
-    // Se não encontrou pasta, tentar arquivos individuais
     const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('video/'));
     if (files.length > 0) {
         alert('Para melhor experiência, arraste uma pasta inteira com vídeos.');
     }
 });
 
-// --- Atalhos de Teclado ---
 document.addEventListener('keydown', (e) => {
-    // Ignorar se estiver em input
     if (e.target.tagName === 'INPUT') return;
     
     switch(e.key) {
@@ -332,7 +315,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// --- Inicialização ---
+window.addEventListener('resize', () => {
+    if (videoPlayer.src && !videoPlayer.paused) {
+        videoPlayer.style.maxWidth = '100%';
+        videoPlayer.style.maxHeight = '100%';
+    }
+});
+
 loadConfig();
 updateAutoplayButton();
 updatePlayButton();
