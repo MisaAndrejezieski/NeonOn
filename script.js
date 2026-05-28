@@ -3,6 +3,7 @@
 // Gerencia: carregamento de pasta, playback,
 // navegação entre vídeos, atalhos de teclado,
 // drag & drop e persistência de configurações
+// Produzido por: Misa
 // ============================================
 
 // --- ELEMENTOS DOM ---
