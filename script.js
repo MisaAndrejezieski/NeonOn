@@ -1,6 +1,6 @@
 // ============================================
 // NEONON - PLAYER DE MÍDIA (Vídeos + Imagens)
-// CORES NEON AUTOMÁTICAS - Desenvolvido por Misa 💜
+// CORES NEON COM TRANSIÇÃO SUAVE - Desenvolvido por Misa 💜
 // ============================================
 
 // --- ELEMENTOS DOM ---
@@ -23,10 +23,9 @@ const volumeSlider = document.getElementById('volumeSlider');
 // --- ELEMENTOS QUE TERÃO CORES MUDANDO ---
 const logoAccent = document.querySelector('.logo .accent');
 const dropIcon = document.querySelector('.drop-icon');
-const allButtons = document.querySelectorAll('.btn-icon, .btn-neon, .btn-play');
 const volumeIcon = document.querySelector('.volume-icon');
-const rangeThumb = document.querySelector('input[type="range"]');
-const activeItems = document.querySelectorAll('.video-list li.active');
+const allNeonBtns = document.querySelectorAll('.btn-neon');
+const timeDisplayElem = document.getElementById('timeDisplay');
 
 // --- ESTADO ---
 let mediaFiles = [];
@@ -36,110 +35,218 @@ let currentFolder = null;
 let colorInterval = null;
 let currentColorIndex = 0;
 
-// --- CORES NEON (RGB para aplicar em tudo) ---
+// --- CORES NEON (RGB para transição suave) ---
 const neonColors = [
-    { name: 'Verde', main: '#00ff88', secondary: '#00ccff', accent: '#cc66ff', glow: '0 0 10px rgba(0, 255, 136, 0.5)' },
-    { name: 'Amarelo', main: '#ffcc00', secondary: '#ffaa00', accent: '#ff8800', glow: '0 0 10px rgba(255, 204, 0, 0.5)' },
-    { name: 'Vermelho', main: '#ff3366', secondary: '#ff0044', accent: '#cc0033', glow: '0 0 10px rgba(255, 51, 102, 0.5)' },
-    { name: 'Azul', main: '#0088ff', secondary: '#0066ff', accent: '#0044cc', glow: '0 0 10px rgba(0, 136, 255, 0.5)' },
-    { name: 'Rosa', main: '#ff66cc', secondary: '#ff44bb', accent: '#cc2299', glow: '0 0 10px rgba(255, 102, 204, 0.5)' },
-    { name: 'Roxo', main: '#aa44ff', secondary: '#8822ff', accent: '#6600cc', glow: '0 0 10px rgba(170, 68, 255, 0.5)' }
+    { r: 0, g: 255, b: 136, name: 'Verde' },      // #00ff88
+    { r: 255, g: 204, b: 0, name: 'Amarelo' },     // #ffcc00
+    { r: 255, g: 51, b: 102, name: 'Vermelho' },   // #ff3366
+    { r: 0, g: 136, b: 255, name: 'Azul' },        // #0088ff
+    { r: 255, g: 102, b: 204, name: 'Rosa' },      // #ff66cc
+    { r: 170, g: 68, b: 255, name: 'Roxo' }        // #aa44ff
 ];
 
-// --- FUNÇÃO QUE MUDA TODAS AS CORES ---
-function applyColor(index) {
-    const color = neonColors[index % neonColors.length];
+// --- FUNÇÃO PARA CONVERTER RGB PARA STRING ---
+function rgbToString(r, g, b) {
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+function rgbaToString(r, g, b, a) {
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
+// --- FUNÇÃO PARA INTERPOLAR ENTRE DUAS CORES ---
+function interpolateColor(color1, color2, progress) {
+    // progress: 0 = totalmente color1, 1 = totalmente color2
+    const r = Math.round(color1.r + (color2.r - color1.r) * progress);
+    const g = Math.round(color1.g + (color2.g - color1.g) * progress);
+    const b = Math.round(color1.b + (color2.b - color1.b) * progress);
+    return { r, g, b };
+}
+
+// --- FUNÇÃO PARA CALCULAR O GLOW BASEADO NA COR ---
+function getGlow(r, g, b) {
+    return `0 0 10px rgba(${r}, ${g}, ${b}, 0.5)`;
+}
+
+// --- VARIÁVEIS PARA ANIMAÇÃO SUAVE ---
+let animationStartTime = 0;
+let animationDuration = 1500; // 1.5 segundos de transição
+let startColor = neonColors[0];
+let targetColor = neonColors[1];
+let isAnimating = false;
+let animationFrame = null;
+
+// --- FUNÇÃO QUE APLICA UMA COR ESPECÍFICA (INSTANTÂNEA) ---
+function applyColorInstant(r, g, b) {
+    const color = rgbToString(r, g, b);
+    const glow = getGlow(r, g, b);
+    const accentR = Math.min(255, r + 50);
+    const accentG = Math.min(255, g + 50);
+    const accentB = Math.min(255, b + 50);
+    const accentColor = rgbToString(accentR, accentG, accentB);
     
     // 1. Logo "On"
     if (logoAccent) {
-        logoAccent.style.color = color.main;
-        logoAccent.style.textShadow = color.glow;
+        logoAccent.style.color = color;
+        logoAccent.style.textShadow = glow;
     }
     
     // 2. Ícone do drop
     if (dropIcon) {
-        dropIcon.style.color = color.main;
-        dropIcon.style.textShadow = color.glow;
+        dropIcon.style.color = color;
+        dropIcon.style.textShadow = glow;
     }
     
     // 3. Botão Play
     if (btnPlay) {
-        btnPlay.style.color = color.main;
-        btnPlay.style.borderColor = color.main;
-        btnPlay.style.textShadow = color.glow;
+        btnPlay.style.color = color;
+        btnPlay.style.borderColor = color;
+        btnPlay.style.textShadow = glow;
     }
     
-    // 4. Botão Autoplay
+    // 4. Botão Autoplay (se ligado)
     if (btnToggleAutoplay && autoplay) {
-        btnToggleAutoplay.style.color = color.main;
-        btnToggleAutoplay.style.textShadow = color.glow;
-        btnToggleAutoplay.style.borderColor = color.main;
+        btnToggleAutoplay.style.color = color;
+        btnToggleAutoplay.style.textShadow = glow;
+        btnToggleAutoplay.style.borderColor = color;
     }
     
-    // 5. Botões neon em geral
-    const neonBtns = document.querySelectorAll('.btn-neon');
-    neonBtns.forEach(btn => {
-        btn.style.color = color.main;
-        btn.style.borderColor = color.main;
+    // 5. Botões neon
+    allNeonBtns.forEach(btn => {
+        btn.style.color = color;
+        btn.style.borderColor = color;
     });
     
-    // 6. Botões ícone no hover (estilo inline para garantir)
-    const iconBtns = document.querySelectorAll('.btn-icon');
-    iconBtns.forEach(btn => {
-        btn.addEventListener('mouseenter', () => {
-            btn.style.color = color.main;
-            btn.style.borderColor = color.main;
-            btn.style.boxShadow = color.glow;
-        });
-        btn.addEventListener('mouseleave', () => {
-            if (btn !== btnPlay && btn !== btnToggleAutoplay) {
-                btn.style.color = '#8888aa';
-                btn.style.borderColor = 'rgba(0, 255, 136, 0.3)';
-                btn.style.boxShadow = 'none';
-            }
-        });
-    });
-    
-    // 7. Volume ícone
+    // 6. Volume ícone
     if (volumeIcon) {
-        volumeIcon.style.color = color.accent;
+        volumeIcon.style.color = accentColor;
     }
     
-    // 8. Slider thumb
-    const style = document.createElement('style');
+    // 7. Slider thumb
+    let style = document.getElementById('dynamic-thumb-style');
+    if (style) style.remove();
+    style = document.createElement('style');
     style.id = 'dynamic-thumb-style';
-    const oldStyle = document.getElementById('dynamic-thumb-style');
-    if (oldStyle) oldStyle.remove();
-    style.textContent = `input[type="range"]::-webkit-slider-thumb { background: ${color.accent}; box-shadow: 0 0 8px ${color.accent}; }`;
+    style.textContent = `input[type="range"]::-webkit-slider-thumb { 
+        background: ${accentColor}; 
+        box-shadow: 0 0 8px ${accentColor};
+        transition: all 0.3s ease;
+    }`;
     document.head.appendChild(style);
     
-    // 9. Time display
-    if (timeDisplay) {
-        timeDisplay.style.color = color.main;
+    // 8. Time display
+    if (timeDisplayElem) {
+        timeDisplayElem.style.color = color;
     }
     
-    // 10. Itens ativos na lista
+    // 9. Itens ativos na lista
     const activeListItems = document.querySelectorAll('.video-list li.active');
     activeListItems.forEach(item => {
-        item.style.color = color.main;
-        item.style.borderLeftColor = color.main;
-        item.style.textShadow = color.glow;
+        item.style.color = color;
+        item.style.borderLeftColor = color;
+        item.style.textShadow = glow;
     });
+}
+
+// --- FUNÇÃO DE ANIMAÇÃO (interpolação suave) ---
+function animateColors(timestamp) {
+    if (!isAnimating) return;
     
-    // 11. Título da sidebar (hover dos botões)
-    console.log(`🌈 Cor atual: ${color.name} Neon`);
+    const elapsed = timestamp - animationStartTime;
+    let progress = Math.min(1, elapsed / animationDuration);
+    
+    // Aplica easing (acelera no início, desacelera no fim)
+    const easeProgress = 1 - Math.pow(1 - progress, 3);
+    
+    // Interpola entre startColor e targetColor
+    const currentColor = interpolateColor(startColor, targetColor, easeProgress);
+    applyColorInstant(currentColor.r, currentColor.g, currentColor.b);
+    
+    if (progress < 1) {
+        // Continua animando
+        animationFrame = requestAnimationFrame(animateColors);
+    } else {
+        // Animação completa
+        isAnimating = false;
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+        
+        // Garante a cor final exata
+        applyColorInstant(targetColor.r, targetColor.g, targetColor.b);
+    }
 }
 
-// --- FUNÇÃO QUE TROCA A COR (chamada automaticamente) ---
+// --- FUNÇÃO QUE INICIA A MUDANÇA SUAVE PARA A PRÓXIMA COR ---
+function changeColorSmooth() {
+    const nextIndex = (currentColorIndex + 1) % neonColors.length;
+    const nextColor = neonColors[nextIndex];
+    
+    // Define a cor atual como start
+    const currentElements = getCurrentAppliedColor();
+    startColor = getCurrentColorFromElements();
+    targetColor = nextColor;
+    
+    // Inicia animação
+    isAnimating = true;
+    animationStartTime = performance.now();
+    animateColors(animationStartTime);
+    
+    currentColorIndex = nextIndex;
+    console.log(`🌈 Transição suave para: ${nextColor.name}`);
+}
+
+// --- FUNÇÃO PARA PEGAR A COR ATUAL APLICADA (fallback) ---
+function getCurrentColorFromElements() {
+    if (logoAccent && logoAccent.style.color) {
+        const rgb = logoAccent.style.color;
+        const match = rgb.match(/\d+/g);
+        if (match && match.length >= 3) {
+            return {
+                r: parseInt(match[0]),
+                g: parseInt(match[1]),
+                b: parseInt(match[2])
+            };
+        }
+    }
+    return neonColors[currentColorIndex];
+}
+
+// --- FUNÇÃO PARA OBTER COR ATUAL (implementação simples) ---
+let currentAppliedColor = neonColors[0];
+
+function getCurrentAppliedColor() {
+    // Retorna a última cor aplicada
+    return currentAppliedColor;
+}
+
+// --- FUNÇÃO QUE TROCA A COR (chamada pelo timer) ---
 function changeColor() {
-    currentColorIndex++;
-    applyColor(currentColorIndex);
+    const nextIndex = (currentColorIndex + 1) % neonColors.length;
+    const nextColor = neonColors[nextIndex];
+    
+    // Anima suavemente do currentAppliedColor para a próxima cor
+    startColor = currentAppliedColor;
+    targetColor = nextColor;
+    
+    isAnimating = true;
+    animationStartTime = performance.now();
+    animateColors(animationStartTime);
+    
+    currentColorIndex = nextIndex;
+    currentAppliedColor = targetColor;
 }
 
-// --- INICIA O LOOP DE CORES (a cada 2 segundos) ---
+// --- SOBRESCREVER applyColorInstant para atualizar currentAppliedColor ---
+const originalApplyColorInstant = applyColorInstant;
+applyColorInstant = function(r, g, b) {
+    originalApplyColorInstant(r, g, b);
+    currentAppliedColor = { r, g, b };
+};
+
+// --- INICIA O LOOP DE CORES COM TRANSIÇÃO SUAVE (a cada 3 segundos) ---
 function startAutoColor() {
     if (colorInterval) clearInterval(colorInterval);
-    colorInterval = setInterval(changeColor, 2000);
+    colorInterval = setInterval(changeColor, 3000); // Troca a cada 3 segundos
 }
 
 // --- CONFIGURAÇÃO ---
@@ -458,9 +565,12 @@ updateAutoplayButton();
 updatePlayButton();
 updateTimeDisplay();
 
-// INICIA AS CORES AUTOMÁTICAS
-applyColor(0);
+// Aplica cor inicial
+applyColorInstant(neonColors[0].r, neonColors[0].g, neonColors[0].b);
+currentAppliedColor = neonColors[0];
+
+// INICIA AS CORES COM TRANSIÇÃO SUAVE
 startAutoColor();
 
 console.log('%c✨ NeonOn - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
-console.log('%c🌈 As cores neon mudam automaticamente a cada 2 segundos!', 'color: #ffcc00; font-size: 12px;');
+console.log('%c🌈 As cores neon mudam suavemente a cada 3 segundos!', 'color: #ffcc00; font-size: 12px;');
