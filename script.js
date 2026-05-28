@@ -1,6 +1,6 @@
 // ============================================
 // NEONON - PLAYER DE MÍDIA (Vídeos + Imagens)
-// Desenvolvido por Misa 💜
+// CORES NEON AUTOMÁTICAS - Desenvolvido por Misa 💜
 // ============================================
 
 // --- ELEMENTOS DOM ---
@@ -25,6 +25,7 @@ let mediaFiles = [];
 let currentIndex = -1;
 let autoplay = true;
 let currentFolder = null;
+let colorInterval = null; // Para controlar a troca automática de cores
 
 // Extensões suportadas
 const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
@@ -41,6 +42,7 @@ function loadConfig() {
             autoplay = config.autoplay ?? true;
             volumeSlider.value = config.volume ?? 100;
             videoPlayer.volume = volumeSlider.value / 100;
+            updateAutoplayButton();
         }
     } catch (e) {
         console.log('Config resetada para padrões.');
@@ -53,6 +55,61 @@ function saveConfig() {
         volume: parseInt(volumeSlider.value)
     };
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+
+// ============================================
+// CORES NEON AUTOMÁTICAS
+// ============================================
+
+const themes = ['green', 'yellow', 'red', 'blue', 'pink', 'purple'];
+let currentThemeIndex = 0;
+
+const themeNames = {
+    green: '💚 Verde Neon',
+    yellow: '💛 Amarelo Neon',
+    red: '❤️ Vermelho Neon',
+    blue: '💙 Azul Neon',
+    pink: '💗 Rosa Neon',
+    purple: '💜 Roxo Neon'
+};
+
+// Função que troca para a próxima cor
+function changeThemeAuto() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    const newTheme = themes[currentThemeIndex];
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Atualiza o botão de autoplay com a nova cor
+    updateAutoplayButton();
+    
+    // Efeito visual no console (opcional)
+    console.log(`🎨 ${themeNames[newTheme]}`);
+}
+
+// Inicia o loop automático de cores
+function startAutoColor() {
+    if (colorInterval) clearInterval(colorInterval);
+    // Troca de cor a cada 3 segundos
+    colorInterval = setInterval(changeThemeAuto, 3000);
+}
+
+// Para o loop automático (se precisar)
+function stopAutoColor() {
+    if (colorInterval) {
+        clearInterval(colorInterval);
+        colorInterval = null;
+    }
+}
+
+// Carrega o tema salvo (se houver)
+function loadTheme() {
+    const savedTheme = localStorage.getItem('neonon_theme');
+    if (savedTheme && themes.includes(savedTheme)) {
+        currentThemeIndex = themes.indexOf(savedTheme);
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+        document.documentElement.setAttribute('data-theme', 'green');
+    }
 }
 
 // --- SELEÇÃO DE PASTA ---
@@ -227,10 +284,11 @@ function toggleAutoplay() {
 }
 
 function updateAutoplayButton() {
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-primary').trim();
     if (autoplay) {
-        btnToggleAutoplay.style.color = '#00ff88';
-        btnToggleAutoplay.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
-        btnToggleAutoplay.style.borderColor = '#00ff88';
+        btnToggleAutoplay.style.color = 'var(--neon-primary)';
+        btnToggleAutoplay.style.textShadow = 'var(--glow-primary)';
+        btnToggleAutoplay.style.borderColor = 'var(--neon-primary)';
         btnToggleAutoplay.title = 'Autoplay: Ligado';
     } else {
         btnToggleAutoplay.style.color = '#8888aa';
@@ -346,11 +404,6 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             toggleFullscreen();
             break;
-        case 't':
-        case 'T':
-            e.preventDefault();
-            changeTheme();
-            break;
         case 'ArrowUp':
             e.preventDefault();
             volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 5);
@@ -366,63 +419,18 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ============================================
-// TEMA DE CORES (Neon Dinâmico)
-// ============================================
-
-const themes = ['green', 'yellow', 'red', 'blue', 'pink', 'purple'];
-let currentThemeIndex = 0;
-
-const themeNames = {
-    green: '💚 Verde Neon',
-    yellow: '💛 Amarelo Neon',
-    red: '❤️ Vermelho Neon',
-    blue: '💙 Azul Neon',
-    pink: '💗 Rosa Neon',
-    purple: '💜 Roxo Neon'
-};
-
-function changeTheme() {
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    const newTheme = themes[currentThemeIndex];
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('neonon_theme', newTheme);
-    
-    console.log(`🎨 Tema alterado: ${themeNames[newTheme]}`);
-}
-
-function loadTheme() {
-    const savedTheme = localStorage.getItem('neonon_theme');
-    if (savedTheme && themes.includes(savedTheme)) {
-        currentThemeIndex = themes.indexOf(savedTheme);
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    } else {
-        document.documentElement.setAttribute('data-theme', 'green');
-    }
-}
-
-function addThemeButton() {
-    const creditsBar = document.querySelector('.credits-bar');
-    if (creditsBar && !document.querySelector('.theme-switch-btn')) {
-        const themeBtn = document.createElement('button');
-        themeBtn.className = 'theme-switch-btn';
-        themeBtn.innerHTML = '🎨 Trocar Cor';
-        themeBtn.title = 'Clique para mudar a cor neon (ou tecla T)';
-        themeBtn.addEventListener('click', changeTheme);
-        creditsBar.appendChild(themeBtn);
-    }
-}
-
 // --- INICIALIZAÇÃO ---
 loadConfig();
 loadTheme();
-addThemeButton();
 updateAutoplayButton();
 updatePlayButton();
 updateTimeDisplay();
 
-console.log('%cNeonOn %cReady - Vídeos + Imagens + Cores Dinâmicas!',
+// INICIA O LOOP AUTOMÁTICO DE CORES
+startAutoColor();
+
+console.log('%cNeonOn %cReady - Cores Mudando Automaticamente!',
     'color: #00ff88; font-size: 16px;',
     'color: #e0e0e0;');
 console.log('%cDesenvolvido por Misa 💜', 'color: #cc66ff; font-size: 12px;');
-console.log('%cPressione T para trocar as cores neon!', 'color: #ffcc00; font-size: 11px;');
+console.log('%c🌈 As cores neon mudam a cada 3 segundos!', 'color: #ffcc00; font-size: 11px;');
