@@ -1,0 +1,66 @@
+/* ============================================
+   FILTROS (Vídeos/Imagens)
+   ============================================ */
+.filter-section {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.filter-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.filter-btn.active {
+    background: rgba(0, 255, 136, 0.15);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+}
+
+/* Ícone de tipo de arquivo na lista */
+.video-list li::before {
+    content: '🎬';
+    margin-right: 8px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.video-list li.image-item::before {
+    content: '🖼️';
+}
+
+/* Controles de imagem */
+.image-controls {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-controls .btn-icon {
+    font-size: 14px;
+    padding: 5px 8px;
+}
+
+/* Modal de zoom (opcional) */
+.image-viewer-zoomed {
+    cursor: zoom-out;
+    transition: transform 0.2s ease;
+}
