@@ -1,327 +1,212 @@
 /* ============================================
-   RESET & BASE
-   Remove margens e paddings padrão,
-   define box-sizing global e variáveis de cor
+   NEONON - CSS PRINCIPAL
+   Dark Neon | Leve | Responsivo
+   Desenvolvido por Misa 💜
    ============================================ */
+
+/* RESET & BASE */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Variáveis CSS - Paleta de cores expandida */
+/* Variáveis CSS */
 :root {
-    /* Fundos */
     --bg-deep: #0a0a14;
     --bg-surface: #12121c;
-    --bg-sidebar: rgba(13, 13, 26, 0.95);
-    --bg-glass: rgba(18, 18, 28, 0.7);
+    --bg-sidebar: #0d0d1a;
+    --bg-glass: rgba(13, 13, 26, 0.95);
     
-    /* Cores neon */
     --neon-green: #00ff88;
-    --neon-cyan: #00e5ff;
-    --neon-pink: #ff2d75;
-    --neon-yellow: #ffea00;
-    --neon-purple: #b000ff;
-    --neon-orange: #ff6d00;
-    --neon-blue: #0044ff;
+    --neon-cyan: #00ccff;
+    --neon-pink: #ff4477;
+    --neon-purple: #cc66ff;
     
-    /* Brilhos - mais intensos */
-    --glow-green: 0 0 20px #00ff88, 0 0 40px rgba(0, 255, 136, 0.5);
-    --glow-cyan: 0 0 20px #00e5ff, 0 0 40px rgba(0, 229, 255, 0.5);
-    --glow-pink: 0 0 20px #ff2d75, 0 0 40px rgba(255, 45, 117, 0.5);
-    --glow-purple: 0 0 20px #b000ff, 0 0 40px rgba(176, 0, 255, 0.5);
-    --glow-yellow: 0 0 20px #ffea00, 0 0 40px rgba(255, 234, 0, 0.3);
-    --glow-white: 0 0 30px rgba(255, 255, 255, 0.3);
+    --text-primary: #e0e0e0;
+    --text-secondary: #8888aa;
     
-    /* Layout */
-    --sidebar-width: 320px;
-    --controls-height: 60px;
+    --glow-green: 0 0 10px rgba(0, 255, 136, 0.5);
+    --glow-cyan: 0 0 10px rgba(0, 204, 255, 0.5);
+    --glow-purple: 0 0 8px rgba(204, 102, 255, 0.6);
+    
+    --sidebar-width: 300px;
+    --controls-height: 56px;
 }
 
-/* Fundo com gradiente animado */
+/* Corpo */
 body {
-    font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
-    background: linear-gradient(135deg, #0a0a14 0%, #0d0d1a 50%, #0a0a14 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-deep);
     color: var(--text-primary);
     height: 100vh;
     overflow: hidden;
-    position: relative;
 }
 
-/* Partículas de fundo animadas */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(255, 45, 117, 0.02) 0%, transparent 50%);
-    pointer-events: none;
-    animation: bgPulse 8s ease-in-out infinite;
-}
-
-@keyframes bgPulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-}
-
-/* ============================================
-   LAYOUT PRINCIPAL
-   ============================================ */
+/* Layout Principal */
 .app {
     display: flex;
     height: calc(100vh - 40px);
-    position: relative;
-    z-index: 1;
 }
 
 /* ============================================
-   SIDEBAR - Glassmorphism Neon
+   SIDEBAR
    ============================================ */
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
-    background: var(--bg-glass);
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(0, 255, 136, 0.2);
+    background: var(--bg-sidebar);
+    border-right: 1px solid rgba(0, 255, 136, 0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative;
 }
 
-/* Borda lateral com gradiente neon animado */
-.sidebar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(180deg, 
-        transparent, 
-        var(--neon-green), 
-        var(--neon-cyan), 
-        var(--neon-purple), 
-        transparent);
-    animation: borderGlow 3s linear infinite;
-}
-
-@keyframes borderGlow {
-    0%, 100% { opacity: 0.3; transform: translateY(-100%); }
-    50% { opacity: 1; transform: translateY(0); }
-}
-
-/* Cabeçalho da sidebar */
+/* Cabeçalho */
 .sidebar-header {
-    padding: 25px 20px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0, 255, 136, 0.15);
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.05), transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Logo com efeito 3D neon */
 .logo {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    background: linear-gradient(135deg, #fff, var(--neon-green), var(--neon-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: none;
-    position: relative;
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--text-primary);
 }
 
 .logo .accent {
-    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: logoPulse 2s ease-in-out infinite;
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+    font-weight: 500;
 }
 
-@keyframes logoPulse {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.3); }
-}
-
-/* ============================================
-   BOTÕES NEON GLOW
-   ============================================ */
+/* Botões */
 .btn-icon {
     background: transparent;
     border: 1px solid rgba(0, 255, 136, 0.3);
     color: var(--text-secondary);
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     padding: 8px 12px;
     border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-icon::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.3), transparent);
-    transform: translate(-50%, -50%);
-    transition: width 0.5s, height 0.5s;
-}
-
-.btn-icon:hover::before {
-    width: 100px;
-    height: 100px;
+    transition: all 0.2s ease;
 }
 
 .btn-icon:hover {
     color: var(--neon-green);
     border-color: var(--neon-green);
     box-shadow: var(--glow-green);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
-/* Botão neon principal */
 .btn-neon {
-    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 229, 255, 0.05));
+    background: transparent;
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
-    padding: 12px 24px;
-    border-radius: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-neon::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, 
-        transparent, 
-        rgba(0, 255, 136, 0.2), 
-        transparent);
-    transform: rotate(45deg);
-    transition: transform 0.5s;
-}
-
-.btn-neon:hover::after {
-    transform: rotate(45deg) translate(50%, 50%);
+    letter-spacing: 1px;
 }
 
 .btn-neon:hover {
-    background: rgba(0, 255, 136, 0.2);
+    background: rgba(0, 255, 136, 0.1);
     box-shadow: var(--glow-green);
-    transform: scale(1.02);
-    letter-spacing: 3px;
+    transform: translateY(-1px);
 }
 
-/* ============================================
-   LISTA DE VÍDEOS - Cards Animados
-   ============================================ */
+.btn-full {
+    width: 100%;
+}
+
+.folder-select {
+    padding: 15px 20px;
+}
+
+/* Lista de Vídeos */
 .video-list {
     flex: 1;
     overflow-y: auto;
     list-style: none;
-    padding: 10px;
-    margin: 5px;
 }
 
-/* Scrollbar customizada */
 .video-list::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 .video-list::-webkit-scrollbar-track {
-    background: rgba(0, 255, 136, 0.1);
-    border-radius: 3px;
+    background: var(--bg-sidebar);
 }
 
 .video-list::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
-    border-radius: 3px;
+    background: rgba(0, 255, 136, 0.3);
+    border-radius: 4px;
 }
 
-/* Cada item da lista - estilo card */
 .video-list li {
-    padding: 14px 16px;
-    margin-bottom: 8px;
+    padding: 12px 20px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(0, 255, 136, 0.1);
-    border-radius: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.2s;
     font-size: 13px;
-    font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-secondary);
-    position: relative;
-}
-
-.video-list li::before {
-    content: '▶';
-    position: absolute;
-    left: -20px;
-    opacity: 0;
-    transition: all 0.3s;
-    color: var(--neon-green);
 }
 
 .video-list li:hover {
-    background: linear-gradient(90deg, rgba(0, 255, 136, 0.1), transparent);
-    border-color: var(--neon-green);
-    transform: translateX(5px);
+    background: rgba(0, 204, 255, 0.05);
     color: var(--text-primary);
+    border-left-color: var(--neon-cyan);
 }
 
-.video-list li:hover::before {
-    left: 8px;
-    opacity: 1;
-}
-
-/* Vídeo ativo */
 .video-list li.active {
-    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(0, 229, 255, 0.05));
-    border-color: var(--neon-green);
-    box-shadow: var(--glow-green);
+    background: rgba(0, 255, 136, 0.08);
     color: var(--neon-green);
+    border-left-color: var(--neon-green);
+    text-shadow: var(--glow-green);
+}
+
+.video-list .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    border: none;
+    cursor: default;
+}
+
+/* Rodapé Sidebar */
+.sidebar-footer {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.counter {
+    font-size: 12px;
+    color: var(--text-secondary);
 }
 
 /* ============================================
-   ÁREA DO PLAYER - Cinematic
+   PLAYER AREA
    ============================================ */
 .player-area {
     flex: 1;
     display: flex;
     flex-direction: column;
     background: #000;
-    position: relative;
+    min-width: 0;
 }
 
-/* Container do vídeo com moldura neon */
 .video-container {
     flex: 1;
     display: flex;
@@ -329,308 +214,275 @@ body::before {
     justify-content: center;
     position: relative;
     background: #000;
-    margin: 20px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-}
-
-.video-container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, 
-        var(--neon-green), 
-        var(--neon-cyan), 
-        var(--neon-purple), 
-        var(--neon-green));
-    border-radius: 22px;
-    opacity: 0;
-    z-index: -1;
-    transition: opacity 0.5s;
-}
-
-.video-container:hover::before {
-    opacity: 0.3;
-    animation: borderRotate 3s linear infinite;
-}
-
-@keyframes borderRotate {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
+    min-height: 0;
 }
 
 #videoPlayer {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: none;
     object-fit: contain;
-    border-radius: 16px;
+    border-radius: 8px;
 }
 
-/* ============================================
-   OVERLAY DE DROP - Estilo Glitch
-   ============================================ */
+/* Overlay */
 .drop-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
     z-index: 10;
-    border-radius: 20px;
 }
 
 .drop-content {
     text-align: center;
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    color: var(--text-secondary);
 }
 
 .drop-icon {
-    font-size: 80px;
+    font-size: 64px;
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
     display: block;
     margin-bottom: 20px;
-    animation: glitch 2s infinite;
-    position: relative;
+    animation: pulse 2s infinite;
 }
 
-@keyframes glitch {
-    0%, 100% { 
-        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
-        transform: skew(0deg);
-    }
-    20% {
-        text-shadow: 2px 0 var(--neon-green), -2px 0 var(--neon-pink);
-        transform: skew(2deg);
-    }
-    40% {
-        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
-        transform: skew(-2deg);
-    }
-    60% {
-        text-shadow: 2px 0 var(--neon-green), -2px 0 var(--neon-pink);
-        transform: skew(1deg);
-    }
-    80% {
-        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
-        transform: skew(-1deg);
-    }
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+.drop-content p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.drop-sub {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.video-container.has-video .drop-overlay {
+    display: none;
 }
 
 /* ============================================
-   BARRA DE CONTROLES - Glassmorphism
+   CONTROLES
    ============================================ */
 .controls-bar {
     height: var(--controls-height);
-    background: var(--bg-glass);
-    backdrop-filter: blur(10px);
+    background: var(--bg-surface);
     display: flex;
     align-items: center;
-    padding: 0 25px;
-    gap: 15px;
-    border-top: 1px solid rgba(0, 255, 136, 0.2);
-    margin: 0 20px 20px 20px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    padding: 0 20px;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Botão Play especial */
 .btn-play {
-    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
-    border: none !important;
-    color: #000 !important;
-    width: 45px;
-    height: 45px;
-    border-radius: 50% !important;
+    color: var(--neon-green) !important;
+    text-shadow: var(--glow-green);
+    font-size: 20px !important;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    background: transparent;
+    border: 1px solid var(--neon-green);
 }
 
-.btn-play:hover {
-    transform: scale(1.1) rotate(360deg);
-    box-shadow: var(--glow-green);
-}
-
-/* Controle de volume */
 .volume-control {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 5px 15px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 25px;
+    gap: 8px;
+    margin-left: 8px;
 }
 
 .volume-icon {
-    font-size: 18px;
-    animation: volumePulse 1s ease-in-out infinite;
-    cursor: pointer;
+    font-size: 16px;
+    color: var(--neon-purple);
 }
 
-@keyframes volumePulse {
-    0%, 100% { text-shadow: none; }
-    50% { text-shadow: var(--glow-purple); }
-}
-
-/* Slider customizado ultra neon */
+/* Slider */
 input[type="range"] {
     -webkit-appearance: none;
-    width: 100px;
+    width: 80px;
     height: 4px;
-    background: linear-gradient(90deg, var(--neon-green), var(--neon-purple));
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
     outline: none;
+    cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--neon-purple);
     box-shadow: var(--glow-purple);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: transform 0.1s;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.3);
+    transform: scale(1.2);
     background: var(--neon-green);
 }
 
-/* Display de tempo */
+/* Time Display */
 .time-display {
     margin-left: auto;
-    font-size: 14px;
-    font-family: 'Courier New', monospace;
+    font-size: 12px;
     color: var(--neon-green);
-    text-shadow: var(--glow-green);
-    letter-spacing: 2px;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 5px 15px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px 12px;
     border-radius: 20px;
 }
 
 /* ============================================
-   CRÉDITOS MISA - Ultra Estiloso
+   CRÉDITOS
    ============================================ */
 .credits-bar {
     height: 40px;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(0, 255, 136, 0.1), 
-        rgba(0, 229, 255, 0.1), 
-        rgba(176, 0, 255, 0.1), 
-        transparent);
+    background: var(--bg-sidebar);
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    z-index: 1;
-    backdrop-filter: blur(5px);
+    border-top: 1px solid rgba(0, 255, 136, 0.1);
 }
 
 .credits-text {
-    font-size: 13px;
-    font-weight: 500;
-    background: linear-gradient(135deg, 
-        var(--neon-green), 
-        var(--neon-cyan), 
-        var(--neon-purple));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    animation: creditsPulse 3s ease-in-out infinite;
-    cursor: pointer;
-    transition: all 0.3s;
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
 }
 
 .credits-text:hover {
-    letter-spacing: 6px;
-    filter: brightness(1.2);
-}
-
-@keyframes creditsPulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 3px;
 }
 
 /* ============================================
-   ANIMAÇÕES ADICIONAIS
+   ESTADOS ESPECIAIS
    ============================================ */
-
-/* Efeito de scanline */
-.video-container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent 0px,
-        transparent 2px,
-        rgba(0, 255, 136, 0.05) 2px,
-        rgba(0, 255, 136, 0.05) 4px
-    );
-    pointer-events: none;
-    opacity: 0.5;
+body.dragover .app {
+    box-shadow: inset 0 0 30px rgba(0, 255, 136, 0.1);
 }
 
-/* Responsividade */
+body.dragover .drop-overlay {
+    background: rgba(0, 255, 136, 0.02);
+}
+
+.video-container:fullscreen {
+    background: #000;
+}
+
+.video-container:fullscreen #videoPlayer {
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
 @media (max-width: 768px) {
     .sidebar {
-        width: 280px;
-        min-width: 280px;
+        width: 260px;
+        min-width: 260px;
     }
     
     .controls-bar {
-        padding: 0 15px;
+        padding: 0 12px;
         gap: 8px;
-        margin: 0 10px 10px 10px;
+    }
+    
+    .volume-control {
+        gap: 4px;
+    }
+    
+    input[type="range"] {
+        width: 60px;
     }
     
     .time-display {
-        font-size: 11px;
-        padding: 3px 10px;
-    }
-    
-    .video-container {
-        margin: 10px;
+        font-size: 10px;
+        padding: 2px 8px;
     }
 }
 
 @media (max-width: 480px) {
     .sidebar {
-        width: 240px;
-        min-width: 240px;
+        width: 220px;
+        min-width: 220px;
+    }
+    
+    .logo {
+        font-size: 18px;
+    }
+    
+    .sidebar-header {
+        padding: 12px;
+    }
+    
+    .btn-icon {
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+    
+    .btn-neon {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    .folder-select {
+        padding: 10px 12px;
+    }
+    
+    .video-list li {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+    
+    .controls-bar {
+        padding: 0 8px;
+        gap: 6px;
     }
     
     .btn-play {
-        width: 35px;
-        height: 35px;
-        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px !important;
+    }
+    
+    .volume-icon {
+        font-size: 12px;
+    }
+    
+    input[type="range"] {
+        width: 50px;
+    }
+    
+    .time-display {
+        font-size: 9px;
+        padding: 2px 6px;
     }
     
     .credits-text {
-        font-size: 10px;
-        letter-spacing: 2px;
+        font-size: 9px;
+        letter-spacing: 1px;
     }
 }
