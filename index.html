@@ -7,79 +7,81 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Container principal: divide a tela em sidebar (lista) e player -->
     <div class="app">
         
-        <!-- Sidebar -->
+        <!-- Sidebar: lista de vídeos e controles de pasta -->
         <aside class="sidebar" id="sidebar">
             
+            <!-- Cabeçalho com logo e botão de autoplay -->
             <div class="sidebar-header">
                 <h1 class="logo">Neon<span class="accent">On</span></h1>
+                <!-- Botão que ativa/desativa avanço automático entre vídeos -->
                 <button class="btn-icon" id="btnToggleAutoplay" title="Autoplay">&#8635;</button>
             </div>
             
-            <!-- Filtro de tipo de mídia -->
-            <div class="filter-section">
-                <button class="filter-btn active" data-filter="all">📱 Todos</button>
-                <button class="filter-btn" data-filter="video">🎬 Vídeos</button>
-                <button class="filter-btn" data-filter="image">🖼️ Imagens</button>
-            </div>
-            
+            <!-- Área para selecionar a pasta de vídeos -->
             <div class="folder-select">
                 <button class="btn-neon btn-full" id="btnSelectFolder">📁 Selecionar Pasta</button>
             </div>
             
+            <!-- Lista dinâmica de vídeos (preenchida pelo script.js) -->
             <ul class="video-list" id="videoList">
                 <li class="empty-state">Nenhum arquivo carregado</li>
             </ul>
             
+            <!-- Rodapé com contador de vídeos -->
             <div class="sidebar-footer">
                 <span class="counter" id="videoCounter"></span>
             </div>
         </aside>
         
-        <!-- Player Area -->
+        <!-- Área principal: player de vídeo e controles -->
         <main class="player-area">
             
+            <!-- Container do vídeo (ocupa a maior parte da tela) -->
             <div class="video-container" id="videoContainer">
-                <!-- Elemento de vídeo -->
-                <video id="videoPlayer" controls style="display: none;"></video>
+                <!-- Elemento de vídeo HTML5 nativo -->
+                <video id="videoPlayer" controls></video>
+                <!-- Elemento de imagem para suporte a fotos -->
+                <img id="imageViewer" style="display: none;">
                 
-                <!-- Elemento de imagem (novo!) -->
-                <img id="imageViewer" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain;">
-                
+                <!-- Overlay exibido quando nenhum vídeo está carregado -->
                 <div class="drop-overlay" id="dropOverlay">
                     <div class="drop-content">
                         <span class="drop-icon">▶</span>
-                        <p>Arraste uma pasta de vídeos ou imagens</p>
+                        <p>Arraste uma pasta de vídeos ou imagens aqui</p>
                         <p class="drop-sub">ou clique em "Selecionar Pasta"</p>
                     </div>
                 </div>
             </div>
             
+            <!-- Barra de controles inferior -->
             <div class="controls-bar">
+                <!-- Vídeo anterior -->
                 <button class="btn-icon" id="btnPrev" title="Anterior">◄</button>
+                <!-- Play/Pause (ícone alterna via script) -->
                 <button class="btn-icon btn-play" id="btnPlay" title="Play/Pause">▶</button>
+                <!-- Próximo vídeo -->
                 <button class="btn-icon" id="btnNext" title="Próximo">►</button>
                 
-                <!-- Controles específicos para imagem (zoom) -->
-                <div class="image-controls" id="imageControls" style="display: none;">
-                    <button class="btn-icon" id="btnZoomIn" title="Zoom +">🔍+</button>
-                    <button class="btn-icon" id="btnZoomOut" title="Zoom -">🔍-</button>
-                    <button class="btn-icon" id="btnResetZoom" title="Reset">⟳</button>
-                </div>
-                
+                <!-- Controle de volume com slider -->
                 <div class="volume-control">
                     <span class="volume-icon">🔊</span>
+                    <!-- Slider de 0 a 100 (volume em porcentagem) -->
                     <input type="range" id="volumeSlider" min="0" max="100" value="100">
                 </div>
                 
+                <!-- Exibição do tempo atual / duração total -->
                 <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
                 
+                <!-- Botão para alternar tela cheia -->
                 <button class="btn-icon" id="btnFullscreen" title="Tela Cheia">⛶</button>
             </div>
         </main>
     </div>
     
+    <!-- Rodapé de créditos -->
     <div class="credits-bar">
         <span class="credits-text">💜 Desenvolvido por Misa 💜</span>
     </div>
