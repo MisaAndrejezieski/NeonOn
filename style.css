@@ -2,7 +2,6 @@
    RESET & BASE
    Remove margens e paddings padrão,
    define box-sizing global e variáveis de cor
-   Produzido por: Misa
    ============================================ */
 *, *::before, *::after {
     margin: 0;
@@ -32,6 +31,7 @@
     --glow-green: 0 0 10px rgba(0, 255, 136, 0.5);
     --glow-cyan: 0 0 10px rgba(0, 204, 255, 0.5);
     --glow-pink: 0 0 10px rgba(255, 68, 119, 0.5);
+    --glow-purple: 0 0 8px rgba(204, 102, 255, 0.6);
     
     /* Layout */
     --sidebar-width: 300px;    /* Largura fixa da barra lateral */
@@ -54,7 +54,7 @@ body {
    ============================================ */
 .app {
     display: flex;
-    height: 100vh;
+    height: calc(100vh - 40px);  /* Desconta a altura da barra de créditos */
 }
 
 /* ============================================
@@ -379,7 +379,17 @@ input[type="range"]::-webkit-slider-thumb {
     height: 14px;
     border-radius: 50%;
     background: var(--neon-purple);
-    box-shadow: 0 0 8px rgba(204, 102, 255, 0.6);  /* Glow roxo */
+    box-shadow: var(--glow-purple);
+    cursor: pointer;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--neon-purple);
+    border: none;
     cursor: pointer;
 }
 
@@ -390,6 +400,51 @@ input[type="range"]::-webkit-slider-thumb {
     color: var(--text-secondary);
     font-family: 'Courier New', monospace;
     letter-spacing: 1px;
+}
+
+/* ============================================
+   BARRA DE CRÉDITOS (MISA)
+   ============================================ */
+.credits-bar {
+    height: 40px;
+    background: linear-gradient(90deg, #0a0a14, #0d0d1a, #0a0a14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.credits-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+    animation: scan 3s infinite;
+}
+
+@keyframes scan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.credits-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+    transition: all 0.3s ease;
+}
+
+.credits-text:hover {
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 4px;
 }
 
 /* ============================================
@@ -414,4 +469,60 @@ body.dragover .drop-overlay {
 .video-container:fullscreen #videoPlayer {
     max-width: 100vw;
     max-height: 100vh;
+}
+
+.video-container:fullscreen .controls-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+        min-width: 250px;
+    }
+    
+    .controls-bar {
+        padding: 0 10px;
+        gap: 5px;
+    }
+    
+    .volume-control {
+        margin-left: 5px;
+    }
+    
+    input[type="range"] {
+        width: 60px;
+    }
+    
+    .credits-text {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 200px;
+        min-width: 200px;
+    }
+    
+    .logo {
+        font-size: 18px;
+    }
+    
+    .btn-icon {
+        font-size: 14px;
+        padding: 5px 8px;
+    }
+    
+    .time-display {
+        font-size: 10px;
+    }
+    
+    .credits-text {
+        font-size: 8px;
+    }
 }
