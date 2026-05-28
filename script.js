@@ -1,6 +1,6 @@
 // ============================================
-// NEONON - PLAYER DE MÍDIA (Vídeos + Imagens)
-// CORES NEON SUAVES + FUNDO PARALLAX
+// NEONON - PLAYER DE MÍDIA + PARALLAX
+// Cores Neon Suaves + Efeito Parallax nas 4 imagens
 // Desenvolvido por Misa 💜
 // ============================================
 
@@ -153,35 +153,45 @@ function startAutoColor() {
 }
 
 // ============================================
-// FUNDO DINÂMICO COM FADE E PARALLAX
+// PARALLAX NAS 4 IMAGENS (o que você pediu!)
 // ============================================
 
-const bgLayers = document.querySelectorAll('.bg-layer');
+const parallaxLayers = document.querySelectorAll('.parallax-layer');
 let currentBgIndex = 0;
 let bgInterval = null;
 
+// Troca de imagem com fade
 function changeBackground() {
-    if (bgLayers.length === 0) return;
-    bgLayers.forEach(layer => layer.classList.remove('active'));
-    currentBgIndex = (currentBgIndex + 1) % bgLayers.length;
-    bgLayers[currentBgIndex].classList.add('active');
+    if (parallaxLayers.length === 0) return;
+    parallaxLayers.forEach(layer => layer.classList.remove('active'));
+    currentBgIndex = (currentBgIndex + 1) % parallaxLayers.length;
+    parallaxLayers[currentBgIndex].classList.add('active');
 }
 
+// Inicia slideshow das imagens de fundo
 function startBackgroundSlideshow() {
     if (bgInterval) clearInterval(bgInterval);
-    if (bgLayers.length > 1) {
-        bgInterval = setInterval(changeBackground, 10000);
+    if (parallaxLayers.length > 1) {
+        bgInterval = setInterval(changeBackground, 10000); // 10 segundos
     }
 }
 
-// Efeito parallax com o mouse
+// EFEITO PARALLAX - movimento suave com o mouse!
 document.addEventListener('mousemove', (e) => {
+    // Calcula posição do mouse (0 a 1)
     const mouseX = e.clientX / window.innerWidth;
     const mouseY = e.clientY / window.innerHeight;
-    bgLayers.forEach(layer => {
-        const moveX = (mouseX - 0.5) * 15;
-        const moveY = (mouseY - 0.5) * 15;
-        layer.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.03)`;
+    
+    // Move cada camada de forma diferente (efeito 3D)
+    parallaxLayers.forEach((layer, index) => {
+        // Velocidades diferentes para cada imagem
+        const speedX = (index + 1) * 8;
+        const speedY = (index + 1) * 5;
+        
+        const moveX = (mouseX - 0.5) * speedX;
+        const moveY = (mouseY - 0.5) * speedY;
+        
+        layer.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
     });
 });
 
@@ -351,7 +361,7 @@ function updateAutoplayButton() {
 }
 
 videoPlayer.addEventListener('ended', () => {
-    if (autoplay && mediaFiles.length > 1) playNext();
+    if (autoplay && mediaFiles.length > 1) btnNext.click();
     else updatePlayButton();
 });
 
@@ -413,7 +423,6 @@ document.addEventListener('keydown', (e) => {
 loadConfig();
 updateAutoplayButton();
 updatePlayButton();
-updateTimeDisplay();
 
 // Aplica cor inicial
 applyColorInstant(neonColors[0].r, neonColors[0].g, neonColors[0].b);
@@ -421,8 +430,9 @@ currentAppliedColor = neonColors[0];
 startAutoColor();
 
 // Fundo: ativa primeira imagem e inicia slideshow
-if (bgLayers.length > 0) bgLayers[0].classList.add('active');
+if (parallaxLayers.length > 0) parallaxLayers[0].classList.add('active');
 startBackgroundSlideshow();
 
 console.log('%c✨ NeonOn - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
-console.log('%c🌈 Cores neon suaves + Fundo parallax com 4 imagens!', 'color: #ffcc00; font-size: 12px;');
+console.log('%c🌈 Cores neon suaves + PARALLAX nas 4 imagens!', 'color: #ffcc00; font-size: 12px;');
+console.log('%c🖱️ Movimente o mouse para ver o efeito parallax!', 'color: #00ff88; font-size: 11px;');
