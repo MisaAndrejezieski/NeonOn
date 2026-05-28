@@ -1,9 +1,13 @@
 // ============================================
 // NEONON - SCRIPT PRINCIPAL
+// ============================================
+// 👩‍💻 Desenvolvido por: MISA
+// 📅 Ano: 2025
+// 🎨 Estética: Dark Neon
+// ============================================
 // Gerencia: carregamento de pasta, playback,
 // navegação entre vídeos, atalhos de teclado,
 // drag & drop e persistência de configurações
-// Produzido por: Misa
 // ============================================
 
 // --- ELEMENTOS DOM ---
@@ -134,8 +138,8 @@ function updateVideoList() {
         videoList.appendChild(li);
     });
     
-    // Atualiza contador no rodapé da sidebar
-    videoCounter.textContent = `${videos.length} vídeo${videos.length > 1 ? 's' : ''}`;
+    // Atualiza contador no rodapé da sidebar com plural inteligente
+    videoCounter.textContent = `${videos.length} vídeo${videos.length !== 1 ? 's' : ''}`;
 }
 
 // --- PLAYBACK DE VÍDEO ---
@@ -181,6 +185,7 @@ async function playVideo(index) {
         
     } catch (err) {
         console.error('Erro ao carregar vídeo:', err);
+        alert('Erro ao carregar o vídeo: ' + err.message);
     }
 }
 
@@ -295,7 +300,7 @@ function updateTimeDisplay() {
 
 // Formata segundos para MM:SS (ex: 125s → "02:05")
 function formatTime(seconds) {
-    if (isNaN(seconds)) return '00:00';
+    if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
@@ -341,7 +346,7 @@ document.addEventListener('drop', async (e) => {
     for (const item of items) {
         if (item.kind === 'file') {
             const entry = await item.getAsFileSystemHandle();
-            if (entry.kind === 'directory') {
+            if (entry && entry.kind === 'directory') {
                 currentFolder = entry;
                 await loadVideosFromFolder(entry);
                 return;
@@ -414,5 +419,7 @@ updateTimeDisplay();
 console.log('%cNeonOn %cready',
     'color: #00ff88; font-size: 16px; text-shadow: 0 0 10px rgba(0,255,136,0.5);',
     'color: #e0e0e0;');
+console.log('%cDesenvolvido por Misa 💜',
+    'color: #cc66ff; font-size: 14px; font-style: italic;');
 console.log('%cSelecione uma pasta para começar.',
     'color: #8888aa; font-style: italic;');
