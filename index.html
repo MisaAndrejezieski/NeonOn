@@ -1,49 +1,51 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeonOn - Player de Vídeos</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- Container principal: divide a tela em sidebar (lista) e player -->
     <div class="app">
-        
+
         <!-- Sidebar: lista de vídeos e controles de pasta -->
         <aside class="sidebar" id="sidebar">
-            
+
             <!-- Cabeçalho com logo e botão de autoplay -->
             <div class="sidebar-header">
                 <h1 class="logo">Neon<span class="accent">On</span></h1>
                 <!-- Botão que ativa/desativa avanço automático entre vídeos -->
                 <button class="btn-icon" id="btnToggleAutoplay" title="Autoplay">&#8635;</button>
             </div>
-            
+
             <!-- Área para selecionar a pasta de vídeos -->
             <div class="folder-select">
                 <button class="btn-neon btn-full" id="btnSelectFolder">📁 Selecionar Pasta</button>
             </div>
-            
+
             <!-- Lista dinâmica de vídeos (preenchida pelo script.js) -->
             <ul class="video-list" id="videoList">
                 <li class="empty-state">Nenhum vídeo carregado</li>
             </ul>
-            
+
             <!-- Rodapé com contador de vídeos -->
             <div class="sidebar-footer">
                 <span class="counter" id="videoCounter"></span>
             </div>
         </aside>
-        
+
         <!-- Área principal: player de vídeo e controles -->
         <main class="player-area">
-            
+
             <!-- Container do vídeo (ocupa a maior parte da tela) -->
             <div class="video-container" id="videoContainer">
                 <!-- Elemento de vídeo HTML5 nativo -->
                 <video id="videoPlayer" controls></video>
-                
+
                 <!-- Overlay exibido quando nenhum vídeo está carregado -->
                 <div class="drop-overlay" id="dropOverlay">
                     <div class="drop-content">
@@ -53,7 +55,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Barra de controles inferior -->
             <div class="controls-bar">
                 <!-- Vídeo anterior -->
@@ -62,28 +64,29 @@
                 <button class="btn-icon btn-play" id="btnPlay" title="Play/Pause">▶</button>
                 <!-- Próximo vídeo -->
                 <button class="btn-icon" id="btnNext" title="Próximo">►</button>
-                
+
                 <!-- Controle de volume com slider -->
                 <div class="volume-control">
                     <span class="volume-icon">🔊</span>
                     <!-- Slider de 0 a 100 (volume em porcentagem) -->
                     <input type="range" id="volumeSlider" min="0" max="100" value="100">
                 </div>
-                
+
                 <!-- Exibição do tempo atual / duração total -->
                 <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
-                
+
                 <!-- Botão para alternar tela cheia -->
                 <button class="btn-icon" id="btnFullscreen" title="Tela Cheia">⛶</button>
             </div>
         </main>
     </div>
-    
+
     <!-- Rodapé de créditos -->
     <div class="credits-bar">
         <span class="credits-text">Desenvolvido por Misa888</span>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
+
 </html>
