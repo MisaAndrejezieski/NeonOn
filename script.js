@@ -95,7 +95,7 @@ async function loadVideosFromFolder(dirHandle) {
     videos = [];
     // Extensões suportadas pelo elemento <video> HTML5 + formatos comuns
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
-    
+
     // Itera sobre todas as entradas da pasta (arquivos e subpastas)
     for await (const entry of dirHandle.values()) {
         if (entry.kind === 'file') {
@@ -105,12 +105,12 @@ async function loadVideosFromFolder(dirHandle) {
             }
         }
     }
-    
+
     // Ordena alfabeticamente com suporte a números (ex: "vídeo 2" vem antes de "vídeo 10")
     videos.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
-    
+
     updateVideoList();
-    
+
     // Se encontrou vídeos, inicia o primeiro automaticamente
     if (videos.length > 0) {
         playVideo(0);
@@ -123,13 +123,13 @@ async function loadVideosFromFolder(dirHandle) {
  */
 function updateVideoList() {
     videoList.innerHTML = '';
-    
+
     if (videos.length === 0) {
         videoList.innerHTML = '<li class="empty-state">Nenhum vídeo encontrado</li>';
         videoCounter.textContent = '';
         return;
     }
-    
+
     videos.forEach((file, index) => {
         const li = document.createElement('li');
         li.textContent = file.name;
@@ -137,7 +137,7 @@ function updateVideoList() {
         if (index === currentIndex) li.classList.add('active');
         videoList.appendChild(li);
     });
-    
+
     // Atualiza contador no rodapé da sidebar com plural inteligente
     videoCounter.textContent = `${videos.length} vídeo${videos.length !== 1 ? 's' : ''}`;
 }
@@ -151,38 +151,38 @@ function updateVideoList() {
  */
 async function playVideo(index) {
     if (index < 0 || index >= videos.length) return;
-    
+
     currentIndex = index;
     const file = videos[index];
-    
+
     try {
         // Converte FileSystemFileHandle → File → URL blob
         const fileData = await file.getFile();
         const url = URL.createObjectURL(fileData);
-        
+
         // Libera memória da URL anterior antes de criar nova
         if (videoPlayer.src) {
             URL.revokeObjectURL(videoPlayer.src);
         }
-        
+
         videoPlayer.src = url;
         videoPlayer.load();
         videoPlayer.style.display = 'block';
         videoContainer.classList.add('has-video');
         dropOverlay.style.display = 'none';  // Esconde overlay de drop
-        
+
         updateVideoList();
         highlightCurrentInList();
-        
+
         videoPlayer.play();
         updatePlayButton();
-        
+
         // Garante que o vídeo se ajuste ao container após carregar metadados
         videoPlayer.addEventListener('loadedmetadata', () => {
             videoPlayer.style.maxWidth = '100%';
             videoPlayer.style.maxHeight = '100%';
         }, { once: true });  // Executa uma vez e remove o listener
-        
+
     } catch (err) {
         console.error('Erro ao carregar vídeo:', err);
         alert('Erro ao carregar o vídeo: ' + err.message);
@@ -338,10 +338,10 @@ document.addEventListener('dragleave', (e) => {
 document.addEventListener('drop', async (e) => {
     e.preventDefault();
     document.body.classList.remove('dragover');
-    
+
     const items = e.dataTransfer.items;
     if (!items) return;
-    
+
     // Procura por uma pasta nos itens arrastados
     for (const item of items) {
         if (item.kind === 'file') {
@@ -353,7 +353,7 @@ document.addEventListener('drop', async (e) => {
             }
         }
     }
-    
+
     // Se arrastou arquivos soltos em vez de pasta, avisa
     const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('video/'));
     if (files.length > 0) {
@@ -365,8 +365,8 @@ document.addEventListener('drop', async (e) => {
 document.addEventListener('keydown', (e) => {
     // Ignora atalhos se o foco estiver em campo de input
     if (e.target.tagName === 'INPUT') return;
-    
-    switch(e.key) {
+
+    switch (e.key) {
         case ' ':                // Espaço → Play/Pause
             e.preventDefault();
             togglePlay();
