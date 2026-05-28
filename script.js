@@ -25,42 +25,13 @@ let mediaFiles = [];
 let currentIndex = -1;
 let autoplay = true;
 let currentFolder = null;
-let colorInterval = null; // Para controlar a troca automática de cores
+let colorInterval = null;
 
 // Extensões suportadas
 const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.ico'];
 
-// --- CONFIGURAÇÃO PERSISTENTE ---
-const CONFIG_KEY = 'neonon_config';
-
-function loadConfig() {
-    try {
-        const saved = localStorage.getItem(CONFIG_KEY);
-        if (saved) {
-            const config = JSON.parse(saved);
-            autoplay = config.autoplay ?? true;
-            volumeSlider.value = config.volume ?? 100;
-            videoPlayer.volume = volumeSlider.value / 100;
-            updateAutoplayButton();
-        }
-    } catch (e) {
-        console.log('Config resetada para padrões.');
-    }
-}
-
-function saveConfig() {
-    const config = {
-        autoplay: autoplay,
-        volume: parseInt(volumeSlider.value)
-    };
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-}
-
-// ============================================
-// CORES NEON AUTOMÁTICAS
-// ============================================
-
+// --- CORES NEON AUTOMÁTICAS ---
 const themes = ['green', 'yellow', 'red', 'blue', 'pink', 'purple'];
 let currentThemeIndex = 0;
 
@@ -73,43 +44,43 @@ const themeNames = {
     purple: '💜 Roxo Neon'
 };
 
-// Função que troca para a próxima cor
+// Função que troca a cor
 function changeThemeAuto() {
     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
     const newTheme = themes[currentThemeIndex];
     document.documentElement.setAttribute('data-theme', newTheme);
-    
-    // Atualiza o botão de autoplay com a nova cor
-    updateAutoplayButton();
-    
-    // Efeito visual no console (opcional)
     console.log(`🎨 ${themeNames[newTheme]}`);
 }
 
-// Inicia o loop automático de cores
+// Inicia o loop de cores (a cada 2 segundos)
 function startAutoColor() {
     if (colorInterval) clearInterval(colorInterval);
-    // Troca de cor a cada 3 segundos
-    colorInterval = setInterval(changeThemeAuto, 3000);
+    colorInterval = setInterval(changeThemeAuto, 2000);
 }
 
-// Para o loop automático (se precisar)
-function stopAutoColor() {
-    if (colorInterval) {
-        clearInterval(colorInterval);
-        colorInterval = null;
+// --- CONFIGURAÇÃO ---
+const CONFIG_KEY = 'neonon_config';
+
+function loadConfig() {
+    try {
+        const saved = localStorage.getItem(CONFIG_KEY);
+        if (saved) {
+            const config = JSON.parse(saved);
+            autoplay = config.autoplay ?? true;
+            volumeSlider.value = config.volume ?? 100;
+            videoPlayer.volume = volumeSlider.value / 100;
+        }
+    } catch (e) {
+        console.log('Config resetada.');
     }
 }
 
-// Carrega o tema salvo (se houver)
-function loadTheme() {
-    const savedTheme = localStorage.getItem('neonon_theme');
-    if (savedTheme && themes.includes(savedTheme)) {
-        currentThemeIndex = themes.indexOf(savedTheme);
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    } else {
-        document.documentElement.setAttribute('data-theme', 'green');
-    }
+function saveConfig() {
+    const config = {
+        autoplay: autoplay,
+        volume: parseInt(volumeSlider.value)
+    };
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
 }
 
 // --- SELEÇÃO DE PASTA ---
@@ -122,8 +93,8 @@ async function selectFolder() {
         await loadMediaFromFolder(dirHandle);
     } catch (err) {
         if (err.name !== 'AbortError') {
-            console.error('Erro ao selecionar pasta:', err);
-            alert('Erro ao acessar a pasta. Verifique as permissões.');
+            console.error('Erro:', err);
+            alert('Erro ao acessar a pasta.');
         }
     }
 }
@@ -142,7 +113,6 @@ async function loadMediaFromFolder(dirHandle) {
     }
     
     mediaFiles.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
-    
     updateMediaList();
     
     if (mediaFiles.length > 0) {
@@ -165,7 +135,6 @@ function updateMediaList() {
         const isImage = imageExtensions.includes(ext);
         const icon = isImage ? '🖼️ ' : '🎬 ';
         li.innerHTML = icon + file.name;
-        
         li.addEventListener('click', () => playMedia(index));
         if (index === currentIndex) li.classList.add('active');
         videoList.appendChild(li);
@@ -209,12 +178,11 @@ async function playMedia(index) {
         
         videoContainer.classList.add('has-video');
         dropOverlay.style.display = 'none';
-        
         updateMediaList();
         highlightCurrentInList();
         
     } catch (err) {
-        console.error('Erro ao carregar arquivo:', err);
+        console.error('Erro:', err);
         alert('Erro ao carregar o arquivo');
     }
 }
@@ -237,7 +205,6 @@ videoPlayer.addEventListener('click', togglePlay);
 
 function togglePlay() {
     if (imageViewer.style.display === 'block') return;
-    
     if (videoPlayer.paused) {
         videoPlayer.play();
     } else {
@@ -251,12 +218,7 @@ function updatePlayButton() {
         btnPlay.innerHTML = '🖼️';
         return;
     }
-    
-    if (videoPlayer.paused) {
-        btnPlay.innerHTML = '▶';
-    } else {
-        btnPlay.innerHTML = '❚❚';
-    }
+    btnPlay.innerHTML = videoPlayer.paused ? '▶' : '❚❚';
 }
 
 btnPrev.addEventListener('click', playPrevious);
@@ -284,7 +246,6 @@ function toggleAutoplay() {
 }
 
 function updateAutoplayButton() {
-    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-primary').trim();
     if (autoplay) {
         btnToggleAutoplay.style.color = 'var(--neon-primary)';
         btnToggleAutoplay.style.textShadow = 'var(--glow-primary)';
@@ -317,7 +278,6 @@ videoPlayer.addEventListener('timeupdate', updateTimeDisplay);
 
 function updateTimeDisplay() {
     if (imageViewer.style.display === 'block') return;
-    
     const current = formatTime(videoPlayer.currentTime);
     const duration = formatTime(videoPlayer.duration);
     timeDisplay.textContent = `${current} / ${duration}`;
@@ -376,11 +336,11 @@ document.addEventListener('drop', async (e) => {
         f.type.startsWith('video/') || f.type.startsWith('image/')
     );
     if (files.length > 0) {
-        alert('Para melhor experiência, arraste uma pasta inteira com vídeos e imagens.');
+        alert('Arraste uma pasta inteira com vídeos e imagens.');
     }
 });
 
-// --- ATALHOS DE TECLADO ---
+// --- ATALHOS ---
 document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT') return;
     
@@ -391,19 +351,9 @@ document.addEventListener('keydown', (e) => {
                 togglePlay();
             }
             break;
-        case 'ArrowLeft':
-            e.preventDefault();
-            playPrevious();
-            break;
-        case 'ArrowRight':
-            e.preventDefault();
-            playNext();
-            break;
-        case 'f':
-        case 'F':
-            e.preventDefault();
-            toggleFullscreen();
-            break;
+        case 'ArrowLeft': e.preventDefault(); playPrevious(); break;
+        case 'ArrowRight': e.preventDefault(); playNext(); break;
+        case 'f': case 'F': e.preventDefault(); toggleFullscreen(); break;
         case 'ArrowUp':
             e.preventDefault();
             volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 5);
@@ -421,16 +371,15 @@ document.addEventListener('keydown', (e) => {
 
 // --- INICIALIZAÇÃO ---
 loadConfig();
-loadTheme();
 updateAutoplayButton();
 updatePlayButton();
 updateTimeDisplay();
 
-// INICIA O LOOP AUTOMÁTICO DE CORES
+// INICIA AS CORES AUTOMÁTICAS
 startAutoColor();
 
-console.log('%cNeonOn %cReady - Cores Mudando Automaticamente!',
+console.log('%cNeonOn %cReady - Cores Mudando Automaticamente a cada 2 segundos!',
     'color: #00ff88; font-size: 16px;',
     'color: #e0e0e0;');
 console.log('%cDesenvolvido por Misa 💜', 'color: #cc66ff; font-size: 12px;');
-console.log('%c🌈 As cores neon mudam a cada 3 segundos!', 'color: #ffcc00; font-size: 11px;');
+console.log('%c🌈 As cores neon mudam sozinhas!', 'color: #ffcc00; font-size: 11px;');
