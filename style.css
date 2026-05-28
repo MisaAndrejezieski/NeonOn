@@ -1,6 +1,6 @@
 /* ============================================
    NEONON - CSS COMPLETO
-   Dark Neon | Responsivo | Transições Suaves
+   Dark Neon | Responsivo | Fundo Parallax
    Desenvolvido por Misa 💜
    ============================================ */
 
@@ -28,9 +28,56 @@ body {
     overflow: hidden;
 }
 
+/* ============================================
+   FUNDO DINÂMICO COM PARALLAX
+   ============================================ */
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.bg-layer.active {
+    opacity: 1;
+}
+
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL
+   ============================================ */
 .app {
     display: flex;
     height: calc(100vh - 40px);
+    position: relative;
+    z-index: 1;
 }
 
 /* ============================================
@@ -39,8 +86,9 @@ body {
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
-    background: var(--bg-sidebar);
-    border-right: 1px solid rgba(0, 255, 136, 0.15);
+    background: rgba(13, 13, 26, 0.85);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(0, 255, 136, 0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -63,7 +111,6 @@ body {
 
 .logo .accent {
     font-weight: 500;
-    /* Transição suave para a cor */
     transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
@@ -123,7 +170,7 @@ body {
 }
 
 .video-list::-webkit-scrollbar-track {
-    background: var(--bg-sidebar);
+    background: rgba(13, 13, 26, 0.5);
 }
 
 .video-list::-webkit-scrollbar-thumb {
@@ -145,14 +192,13 @@ body {
 }
 
 .video-list li:hover {
-    background: rgba(0, 204, 255, 0.05);
+    background: rgba(0, 204, 255, 0.1);
     color: var(--text-primary);
 }
 
 .video-list li.active {
-    background: rgba(0, 255, 136, 0.08);
+    background: rgba(0, 255, 136, 0.15);
     border-left-color: currentColor;
-    /* Transição suave para a cor ativa */
     transition: color 0.4s ease, text-shadow 0.4s ease, border-left-color 0.4s ease;
 }
 
@@ -181,7 +227,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #000;
+    background: transparent;
     min-width: 0;
 }
 
@@ -191,7 +237,7 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    background: #000;
+    background: transparent;
     min-height: 0;
 }
 
@@ -202,7 +248,8 @@ body {
     height: auto;
     display: none;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 #imageViewer {
@@ -211,12 +258,13 @@ body {
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 12px;
     display: none;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================
-   OVERLAY (DROP)
+   OVERLAY
    ============================================ */
 .drop-overlay {
     position: absolute;
@@ -234,6 +282,10 @@ body {
 .drop-content {
     text-align: center;
     color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px 50px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
 }
 
 .drop-icon {
@@ -241,7 +293,6 @@ body {
     display: block;
     margin-bottom: 20px;
     animation: pulse 2s infinite;
-    /* Transição suave para a cor */
     transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
@@ -265,11 +316,12 @@ body {
 }
 
 /* ============================================
-   BARRA DE CONTROLES
+   CONTROLES
    ============================================ */
 .controls-bar {
     height: var(--controls-height);
-    background: var(--bg-surface);
+    background: rgba(18, 18, 28, 0.85);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -286,7 +338,6 @@ body {
     justify-content: center;
     background: transparent;
     border: 1px solid;
-    /* Transição suave para a cor */
     transition: all 0.4s ease;
 }
 
@@ -303,11 +354,9 @@ body {
 
 .volume-icon {
     font-size: 16px;
-    /* Transição suave para a cor */
     transition: color 0.4s ease;
 }
 
-/* SLIDER (controle de volume) */
 input[type="range"] {
     -webkit-appearance: none;
     width: 80px;
@@ -324,7 +373,6 @@ input[type="range"]::-webkit-slider-thumb {
     height: 12px;
     border-radius: 50%;
     cursor: pointer;
-    /* Transição suave para a cor */
     transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
 }
 
@@ -332,7 +380,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(1.2);
 }
 
-/* DISPLAY DE TEMPO */
 .time-display {
     margin-left: auto;
     font-size: 12px;
@@ -341,7 +388,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
     background: rgba(0, 0, 0, 0.4);
     padding: 4px 12px;
     border-radius: 20px;
-    /* Transição suave para a cor */
     transition: color 0.4s ease;
 }
 
@@ -350,11 +396,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
    ============================================ */
 .credits-bar {
     height: 40px;
-    background: var(--bg-sidebar);
+    background: rgba(13, 13, 26, 0.85);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
     border-top: 1px solid rgba(0, 255, 136, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .credits-text {
@@ -371,26 +420,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* ============================================
-   ESTADOS ESPECIAIS
+   TRANSIÇÕES GLOBAIS
    ============================================ */
-body.dragover .app {
-    box-shadow: inset 0 0 30px rgba(0, 255, 136, 0.1);
-}
-
-.video-container:fullscreen {
-    background: #000;
-}
-
-.video-container:fullscreen #videoPlayer,
-.video-container:fullscreen #imageViewer {
-    max-width: 100vw;
-    max-height: 100vh;
-}
-
-/* ============================================
-   TRANSIÇÕES GLOBAIS PARA CORES
-   ============================================ */
-/* Garante que todos os elementos neon tenham transição suave */
 .logo .accent,
 .btn-play,
 .btn-neon,
@@ -409,85 +440,24 @@ body.dragover .app {
    RESPONSIVIDADE
    ============================================ */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 260px;
-        min-width: 260px;
-    }
-    
-    .controls-bar {
-        padding: 0 12px;
-        gap: 8px;
-    }
-    
-    input[type="range"] {
-        width: 60px;
-    }
-    
-    .time-display {
-        font-size: 10px;
-        padding: 2px 8px;
-    }
+    .sidebar { width: 260px; min-width: 260px; }
+    .controls-bar { padding: 0 12px; gap: 8px; }
+    input[type="range"] { width: 60px; }
+    .time-display { font-size: 10px; padding: 2px 8px; }
 }
 
 @media (max-width: 480px) {
-    .sidebar {
-        width: 220px;
-        min-width: 220px;
-    }
-    
-    .logo {
-        font-size: 18px;
-    }
-    
-    .sidebar-header {
-        padding: 12px;
-    }
-    
-    .btn-icon {
-        font-size: 14px;
-        padding: 6px 8px;
-    }
-    
-    .btn-neon {
-        font-size: 11px;
-        padding: 8px 12px;
-    }
-    
-    .folder-select {
-        padding: 10px 12px;
-    }
-    
-    .video-list li {
-        padding: 8px 12px;
-        font-size: 11px;
-    }
-    
-    .controls-bar {
-        padding: 0 8px;
-        gap: 6px;
-    }
-    
-    .btn-play {
-        width: 32px;
-        height: 32px;
-        font-size: 14px !important;
-    }
-    
-    .volume-icon {
-        font-size: 12px;
-    }
-    
-    input[type="range"] {
-        width: 50px;
-    }
-    
-    .time-display {
-        font-size: 9px;
-        padding: 2px 6px;
-    }
-    
-    .credits-text {
-        font-size: 9px;
-        letter-spacing: 1px;
-    }
+    .sidebar { width: 220px; min-width: 220px; }
+    .logo { font-size: 18px; }
+    .sidebar-header { padding: 12px; }
+    .btn-icon { font-size: 14px; padding: 6px 8px; }
+    .btn-neon { font-size: 11px; padding: 8px 12px; }
+    .folder-select { padding: 10px 12px; }
+    .video-list li { padding: 8px 12px; font-size: 11px; }
+    .controls-bar { padding: 0 8px; gap: 6px; }
+    .btn-play { width: 32px; height: 32px; font-size: 14px !important; }
+    .volume-icon { font-size: 12px; }
+    input[type="range"] { width: 50px; }
+    .time-display { font-size: 9px; padding: 2px 6px; }
+    .credits-text { font-size: 9px; letter-spacing: 1px; }
 }
