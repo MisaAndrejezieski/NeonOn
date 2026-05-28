@@ -1,6 +1,6 @@
 /* ============================================
-   NEONON - CSS COMPLETO
-   Dark Neon | Responsivo | PARALLAX NAS IMAGENS
+   NEONON - CSS PROFISSIONAL
+   Dark Neon | Responsivo | Efeitos Visuais
    Desenvolvido por Misa 💜
    ============================================ */
 
@@ -21,74 +21,26 @@
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-deep);
     color: var(--text-primary);
     height: 100vh;
     overflow: hidden;
 }
 
-/* ============================================
-   FUNDO PARALLAX (o que você pediu!)
-   ============================================ */
-
-.parallax-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120%; /* Mais alto para efeito de movimento */
-    z-index: -2;
-    overflow: hidden;
-}
-
-.parallax-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-    will-change: transform;
-}
-
-.parallax-layer.active {
-    opacity: 1;
-}
-
-/* Overlay escuro para manter contraste */
-.parallax-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: -1;
-}
-
-/* ============================================
-   LAYOUT PRINCIPAL
-   ============================================ */
 .app {
     display: flex;
     height: calc(100vh - 40px);
-    position: relative;
-    z-index: 1;
 }
 
 /* ============================================
-   SIDEBAR (com vidro para ver o fundo)
+   SIDEBAR
    ============================================ */
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
-    background: rgba(13, 13, 26, 0.85);
-    backdrop-filter: blur(12px);
-    border-right: 1px solid rgba(0, 255, 136, 0.2);
+    background: var(--bg-sidebar);
+    border-right: 1px solid rgba(0, 255, 136, 0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -106,12 +58,12 @@ body {
     font-size: 24px;
     font-weight: 300;
     letter-spacing: 3px;
-    color: var(--text-primary);
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .logo .accent {
     font-weight: 500;
-    transition: color 0.4s ease, text-shadow 0.4s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 /* ============================================
@@ -129,7 +81,8 @@ body {
 }
 
 .btn-icon:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-neon {
@@ -145,7 +98,8 @@ body {
 }
 
 .btn-neon:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-full {
@@ -170,7 +124,7 @@ body {
 }
 
 .video-list::-webkit-scrollbar-track {
-    background: rgba(13, 13, 26, 0.5);
+    background: var(--bg-sidebar);
 }
 
 .video-list::-webkit-scrollbar-thumb {
@@ -192,14 +146,15 @@ body {
 }
 
 .video-list li:hover {
-    background: rgba(0, 204, 255, 0.1);
+    background: rgba(0, 204, 255, 0.05);
     color: var(--text-primary);
+    padding-left: 25px;
 }
 
 .video-list li.active {
-    background: rgba(0, 255, 136, 0.15);
+    background: rgba(0, 255, 136, 0.08);
     border-left-color: currentColor;
-    transition: color 0.4s ease, text-shadow 0.4s ease, border-left-color 0.4s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease, border-left-color 0.3s ease;
 }
 
 .video-list .empty-state {
@@ -227,7 +182,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: transparent;
+    background: #000;
     min-width: 0;
 }
 
@@ -237,7 +192,7 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    background: transparent;
+    background: #000;
     min-height: 0;
 }
 
@@ -248,7 +203,7 @@ body {
     height: auto;
     display: none;
     object-fit: contain;
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
@@ -258,7 +213,7 @@ body {
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 12px;
+    border-radius: 8px;
     display: none;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
@@ -282,10 +237,10 @@ body {
 .drop-content {
     text-align: center;
     color: var(--text-secondary);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     padding: 30px 50px;
     border-radius: 20px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
 }
 
 .drop-icon {
@@ -293,7 +248,7 @@ body {
     display: block;
     margin-bottom: 20px;
     animation: pulse 2s infinite;
-    transition: color 0.4s ease, text-shadow 0.4s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 @keyframes pulse {
@@ -320,8 +275,7 @@ body {
    ============================================ */
 .controls-bar {
     height: var(--controls-height);
-    background: rgba(18, 18, 28, 0.85);
-    backdrop-filter: blur(12px);
+    background: var(--bg-surface);
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -338,7 +292,7 @@ body {
     justify-content: center;
     background: transparent;
     border: 1px solid;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 }
 
 .btn-play:hover {
@@ -354,7 +308,7 @@ body {
 
 .volume-icon {
     font-size: 16px;
-    transition: color 0.4s ease;
+    transition: color 0.3s ease;
 }
 
 input[type="range"] {
@@ -373,7 +327,7 @@ input[type="range"]::-webkit-slider-thumb {
     height: 12px;
     border-radius: 50%;
     cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
@@ -388,7 +342,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     background: rgba(0, 0, 0, 0.4);
     padding: 4px 12px;
     border-radius: 20px;
-    transition: color 0.4s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 /* ============================================
@@ -396,14 +350,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
    ============================================ */
 .credits-bar {
     height: 40px;
-    background: rgba(13, 13, 26, 0.85);
-    backdrop-filter: blur(12px);
+    background: var(--bg-sidebar);
     display: flex;
     align-items: center;
     justify-content: center;
     border-top: 1px solid rgba(0, 255, 136, 0.1);
-    position: relative;
-    z-index: 1;
 }
 
 .credits-text {
@@ -417,23 +368,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: #00ff88;
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
     letter-spacing: 3px;
-}
-
-/* ============================================
-   TRANSIÇÕES GLOBAIS
-   ============================================ */
-.logo .accent,
-.btn-play,
-.btn-neon,
-.btn-icon,
-.volume-icon,
-.time-display,
-.drop-icon,
-.video-list li.active {
-    transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                text-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* ============================================
