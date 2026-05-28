@@ -9,267 +9,369 @@
     box-sizing: border-box;
 }
 
-/* Variáveis CSS: paleta de cores e dimensões reutilizáveis */
+/* Variáveis CSS - Paleta de cores expandida */
 :root {
     /* Fundos */
-    --bg-deep: #0a0a14;       /* Fundo principal (quase preto azulado) */
-    --bg-surface: #12121c;     /* Superfícies (controles, cards) */
-    --bg-sidebar: #0d0d1a;     /* Fundo da barra lateral */
+    --bg-deep: #0a0a14;
+    --bg-surface: #12121c;
+    --bg-sidebar: rgba(13, 13, 26, 0.95);
+    --bg-glass: rgba(18, 18, 28, 0.7);
     
-    /* Cores neon (assinatura visual) */
-    --neon-green: #00ff88;     /* Destaque principal, play, ativo */
-    --neon-cyan: #00ccff;      /* Hover, ícones secundários */
-    --neon-pink: #ff4477;      /* Stop, elementos de alerta */
-    --neon-yellow: #ffcc00;    /* Pausa, atenção */
-    --neon-purple: #cc66ff;    /* Volume, controles deslizantes */
+    /* Cores neon */
+    --neon-green: #00ff88;
+    --neon-cyan: #00e5ff;
+    --neon-pink: #ff2d75;
+    --neon-yellow: #ffea00;
+    --neon-purple: #b000ff;
+    --neon-orange: #ff6d00;
+    --neon-blue: #0044ff;
     
-    /* Texto */
-    --text-primary: #e0e0e0;   /* Texto principal (quase branco) */
-    --text-secondary: #8888aa; /* Texto secundário (cinza azulado) */
-    
-    /* Efeitos de brilho neon (box-shadow + text-shadow) */
-    --glow-green: 0 0 10px rgba(0, 255, 136, 0.5);
-    --glow-cyan: 0 0 10px rgba(0, 204, 255, 0.5);
-    --glow-pink: 0 0 10px rgba(255, 68, 119, 0.5);
-    --glow-purple: 0 0 8px rgba(204, 102, 255, 0.6);
+    /* Brilhos - mais intensos */
+    --glow-green: 0 0 20px #00ff88, 0 0 40px rgba(0, 255, 136, 0.5);
+    --glow-cyan: 0 0 20px #00e5ff, 0 0 40px rgba(0, 229, 255, 0.5);
+    --glow-pink: 0 0 20px #ff2d75, 0 0 40px rgba(255, 45, 117, 0.5);
+    --glow-purple: 0 0 20px #b000ff, 0 0 40px rgba(176, 0, 255, 0.5);
+    --glow-yellow: 0 0 20px #ffea00, 0 0 40px rgba(255, 234, 0, 0.3);
+    --glow-white: 0 0 30px rgba(255, 255, 255, 0.3);
     
     /* Layout */
-    --sidebar-width: 300px;    /* Largura fixa da barra lateral */
-    --controls-height: 50px;   /* Altura da barra de controles */
+    --sidebar-width: 320px;
+    --controls-height: 60px;
 }
 
-/* Corpo da página: fundo escuro, altura total da janela */
+/* Fundo com gradiente animado */
 body {
-    font-family: 'Segoe UI', 'Arial', sans-serif;
-    background: var(--bg-deep);
+    font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0a0a14 0%, #0d0d1a 50%, #0a0a14 100%);
     color: var(--text-primary);
     height: 100vh;
-    overflow: hidden;          /* Evita rolagem na página inteira */
-    user-select: none;         /* Impede seleção de texto acidental */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Partículas de fundo animadas */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 45, 117, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    animation: bgPulse 8s ease-in-out infinite;
+}
+
+@keyframes bgPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 /* ============================================
    LAYOUT PRINCIPAL
-   Flexbox horizontal: sidebar fixa + player flexível
    ============================================ */
 .app {
     display: flex;
-    height: calc(100vh - 40px);  /* Desconta a altura da barra de créditos */
+    height: calc(100vh - 40px);
+    position: relative;
+    z-index: 1;
 }
 
 /* ============================================
-   SIDEBAR (BARRA LATERAL)
-   Lista de vídeos, seleção de pasta, logo
+   SIDEBAR - Glassmorphism Neon
    ============================================ */
 .sidebar {
     width: var(--sidebar-width);
-    min-width: var(--sidebar-width);  /* Evita que encolha */
-    background: var(--bg-sidebar);
-    border-right: 1px solid rgba(0, 255, 136, 0.1);  /* Borda sutil neon */
+    min-width: var(--sidebar-width);
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(0, 255, 136, 0.2);
     display: flex;
     flex-direction: column;
-    overflow: hidden;          /* Conteúdo interno faz scroll próprio */
+    overflow: hidden;
+    position: relative;
 }
 
-/* Cabeçalho da sidebar: logo + botão autoplay */
+/* Borda lateral com gradiente neon animado */
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        transparent, 
+        var(--neon-green), 
+        var(--neon-cyan), 
+        var(--neon-purple), 
+        transparent);
+    animation: borderGlow 3s linear infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.3; transform: translateY(-100%); }
+    50% { opacity: 1; transform: translateY(0); }
+}
+
+/* Cabeçalho da sidebar */
 .sidebar-header {
-    padding: 20px;
+    padding: 25px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 255, 136, 0.15);
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.05), transparent);
 }
 
-/* Logo "NeonOn" com destaque neon no "On" */
+/* Logo com efeito 3D neon */
 .logo {
-    font-size: 24px;
-    font-weight: 300;
-    letter-spacing: 3px;
-    color: var(--text-primary);
-    text-transform: uppercase;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #fff, var(--neon-green), var(--neon-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    position: relative;
 }
 
 .logo .accent {
-    color: var(--neon-green);
-    text-shadow: var(--glow-green);  /* Brilho neon verde */
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: logoPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
 }
 
 /* ============================================
-   BOTÕES
-   Estilos reutilizáveis para botões de ícone e neon
+   BOTÕES NEON GLOW
    ============================================ */
-
-/* Botão de ícone (anterior, próximo, tela cheia) */
 .btn-icon {
     background: transparent;
-    border: 1px solid transparent;
+    border: 1px solid rgba(0, 255, 136, 0.3);
     color: var(--text-secondary);
     font-size: 18px;
     cursor: pointer;
     padding: 8px 12px;
-    border-radius: 6px;
-    transition: all 0.2s ease;  /* Transição suave no hover */
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Efeito hover: borda cyan neon, brilho, texto iluminado */
+.btn-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.3), transparent);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.btn-icon:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
 .btn-icon:hover {
-    color: var(--neon-cyan);
-    border-color: var(--neon-cyan);
-    text-shadow: var(--glow-cyan);
-    box-shadow: var(--glow-cyan);
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+    box-shadow: var(--glow-green);
+    transform: translateY(-2px);
 }
 
-/* Botão com estilo neon (usado em "Selecionar Pasta") */
+/* Botão neon principal */
 .btn-neon {
-    background: transparent;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 229, 255, 0.05));
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 12px 24px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 600;
     transition: all 0.3s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-neon::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(0, 255, 136, 0.2), 
+        transparent);
+    transform: rotate(45deg);
+    transition: transform 0.5s;
+}
+
+.btn-neon:hover::after {
+    transform: rotate(45deg) translate(50%, 50%);
 }
 
 .btn-neon:hover {
-    background: rgba(0, 255, 136, 0.1);  /* Fundo verde translúcido */
+    background: rgba(0, 255, 136, 0.2);
     box-shadow: var(--glow-green);
-    text-shadow: var(--glow-green);
-}
-
-/* Botão que ocupa toda a largura disponível */
-.btn-full {
-    width: 100%;
-}
-
-/* Container do botão de selecionar pasta */
-.folder-select {
-    padding: 15px 20px;
+    transform: scale(1.02);
+    letter-spacing: 3px;
 }
 
 /* ============================================
-   LISTA DE VÍDEOS
-   Scroll vertical, itens clicáveis, destaque no ativo
+   LISTA DE VÍDEOS - Cards Animados
    ============================================ */
 .video-list {
-    flex: 1;                   /* Ocupa todo espaço restante */
-    overflow-y: auto;          /* Scroll vertical se necessário */
+    flex: 1;
+    overflow-y: auto;
     list-style: none;
-    padding: 0;
+    padding: 10px;
+    margin: 5px;
 }
 
-/* Barra de rolagem customizada (Webkit: Chrome, Edge) */
+/* Scrollbar customizada */
 .video-list::-webkit-scrollbar {
     width: 6px;
 }
 
 .video-list::-webkit-scrollbar-track {
-    background: var(--bg-sidebar);
-}
-
-.video-list::-webkit-scrollbar-thumb {
-    background: rgba(0, 255, 136, 0.2);
+    background: rgba(0, 255, 136, 0.1);
     border-radius: 3px;
 }
 
-.video-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 255, 136, 0.4);
+.video-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+    border-radius: 3px;
 }
 
-/* Cada item da lista (nome do vídeo) */
+/* Cada item da lista - estilo card */
 .video-list li {
-    padding: 12px 20px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
     cursor: pointer;
-    border-left: 3px solid transparent;  /* Reserva espaço para destaque */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(0, 255, 136, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 13px;
-    white-space: nowrap;       /* Não quebra linha */
-    overflow: hidden;          /* Esconde texto excedente */
-    text-overflow: ellipsis;   /* "..." no final do texto longo */
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--text-secondary);
+    position: relative;
 }
 
-/* Hover: fundo cyan translúcido, borda cyan, texto mais claro */
-.video-list li:hover {
-    background: rgba(0, 204, 255, 0.05);
-    color: var(--text-primary);
-    border-left-color: var(--neon-cyan);
-}
-
-/* Vídeo atualmente em reprodução: destaque verde neon */
-.video-list li.active {
-    background: rgba(0, 255, 136, 0.08);
+.video-list li::before {
+    content: '▶';
+    position: absolute;
+    left: -20px;
+    opacity: 0;
+    transition: all 0.3s;
     color: var(--neon-green);
-    border-left-color: var(--neon-green);
-    text-shadow: var(--glow-green);
 }
 
-/* Estado vazio (quando não há vídeos) */
-.video-list .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-secondary);
-    border: none;
-    cursor: default;
+.video-list li:hover {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.1), transparent);
+    border-color: var(--neon-green);
+    transform: translateX(5px);
+    color: var(--text-primary);
 }
 
-.video-list .empty-state:hover {
-    background: transparent;
-    border-left-color: transparent;
+.video-list li:hover::before {
+    left: 8px;
+    opacity: 1;
 }
 
-/* Rodapé da sidebar (contador de vídeos) */
-.sidebar-footer {
-    padding: 15px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.counter {
-    font-size: 12px;
-    color: var(--text-secondary);
-    text-shadow: 0 0 5px rgba(136, 136, 170, 0.3);
+/* Vídeo ativo */
+.video-list li.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), rgba(0, 229, 255, 0.05));
+    border-color: var(--neon-green);
+    box-shadow: var(--glow-green);
+    color: var(--neon-green);
 }
 
 /* ============================================
-   ÁREA DO PLAYER
-   Container do vídeo + barra de controles
+   ÁREA DO PLAYER - Cinematic
    ============================================ */
 .player-area {
-    flex: 1;                   /* Ocupa todo espaço restante */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    background: #000;          /* Preto puro para imersão no vídeo */
-    min-width: 0;              /* Permite que flex encolha corretamente */
+    background: #000;
+    position: relative;
 }
 
-/* Container do elemento <video> */
+/* Container do vídeo com moldura neon */
 .video-container {
     flex: 1;
     display: flex;
-    align-items: center;       /* Centraliza verticalmente */
-    justify-content: center;   /* Centraliza horizontalmente */
+    align-items: center;
+    justify-content: center;
     position: relative;
     background: #000;
-    overflow: hidden;          /* Evita que vídeo vaze */
-    min-height: 0;             /* Permite que flex encolha corretamente */
+    margin: 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
 }
 
-/* Elemento de vídeo: tamanho adaptável, mantém proporção */
+.video-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        var(--neon-green), 
+        var(--neon-cyan), 
+        var(--neon-purple), 
+        var(--neon-green));
+    border-radius: 22px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.5s;
+}
+
+.video-container:hover::before {
+    opacity: 0.3;
+    animation: borderRotate 3s linear infinite;
+}
+
+@keyframes borderRotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
 #videoPlayer {
-    max-width: 100%;           /* Não ultrapassa a largura do container */
-    max-height: 100%;          /* Não ultrapassa a altura do container */
-    width: auto;
-    height: auto;
-    display: none;             /* Escondido até carregar um vídeo */
-    object-fit: contain;       /* Mantém proporção, mostra vídeo inteiro */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 16px;
 }
 
 /* ============================================
-   OVERLAY DE DROP (arrastar arquivos)
-   Exibido quando nenhum vídeo está carregado
+   OVERLAY DE DROP - Estilo Glitch
    ============================================ */
 .drop-overlay {
     position: absolute;
@@ -277,252 +379,258 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;      /* Cliques passam para o player */
     z-index: 10;
+    border-radius: 20px;
 }
 
 .drop-content {
     text-align: center;
-    color: var(--text-secondary);
+    animation: float 3s ease-in-out infinite;
 }
 
-/* Ícone grande pulsante */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
 .drop-icon {
-    font-size: 64px;
-    color: var(--neon-green);
-    text-shadow: var(--glow-green);
+    font-size: 80px;
     display: block;
     margin-bottom: 20px;
-    animation: pulse 2s infinite;  /* Animação de pulsação */
+    animation: glitch 2s infinite;
+    position: relative;
 }
 
-/* Animação: opacidade varia entre 0.3 e 0.8 */
-@keyframes pulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-}
-
-.drop-content p {
-    font-size: 16px;
-    margin: 5px 0;
-}
-
-.drop-sub {
-    font-size: 12px !important;
-    opacity: 0.5;
-}
-
-/* Quando há vídeo carregado, esconde o overlay */
-.video-container.has-video .drop-overlay {
-    display: none;
+@keyframes glitch {
+    0%, 100% { 
+        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
+        transform: skew(0deg);
+    }
+    20% {
+        text-shadow: 2px 0 var(--neon-green), -2px 0 var(--neon-pink);
+        transform: skew(2deg);
+    }
+    40% {
+        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
+        transform: skew(-2deg);
+    }
+    60% {
+        text-shadow: 2px 0 var(--neon-green), -2px 0 var(--neon-pink);
+        transform: skew(1deg);
+    }
+    80% {
+        text-shadow: -2px 0 var(--neon-green), 2px 0 var(--neon-pink);
+        transform: skew(-1deg);
+    }
 }
 
 /* ============================================
-   BARRA DE CONTROLES
-   Play/Pause, navegação, volume, tempo, fullscreen
+   BARRA DE CONTROLES - Glassmorphism
    ============================================ */
 .controls-bar {
     height: var(--controls-height);
-    background: var(--bg-surface);
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
-    padding: 0 20px;
-    gap: 10px;                 /* Espaçamento entre elementos */
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0 25px;
+    gap: 15px;
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+    margin: 0 20px 20px 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Botão Play/Pause com destaque verde fixo */
+/* Botão Play especial */
 .btn-play {
-    color: var(--neon-green) !important;
-    text-shadow: var(--glow-green);
-    font-size: 20px !important;
-    width: 40px;
-    height: 40px;
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+    border: none !important;
+    color: #000 !important;
+    width: 45px;
+    height: 45px;
+    border-radius: 50% !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
 }
 
-/* Controle de volume (ícone + slider) */
+.btn-play:hover {
+    transform: scale(1.1) rotate(360deg);
+    box-shadow: var(--glow-green);
+}
+
+/* Controle de volume */
 .volume-control {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-left: 20px;         /* Separa dos botões de navegação */
+    gap: 10px;
+    padding: 5px 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 25px;
 }
 
 .volume-icon {
-    font-size: 16px;
-    color: var(--neon-purple);
-}
-
-/* ============================================
-   SLIDER DE VOLUME (input range customizado)
-   ============================================ */
-input[type="range"] {
-    -webkit-appearance: none;  /* Remove estilo padrão */
-    width: 80px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    outline: none;
+    font-size: 18px;
+    animation: volumePulse 1s ease-in-out infinite;
     cursor: pointer;
 }
 
-/* Bolinha do slider (thumb) customizada */
+@keyframes volumePulse {
+    0%, 100% { text-shadow: none; }
+    50% { text-shadow: var(--glow-purple); }
+}
+
+/* Slider customizado ultra neon */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-purple));
+    border-radius: 2px;
+    outline: none;
+}
+
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--neon-purple);
     box-shadow: var(--glow-purple);
     cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* Firefox */
-input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--neon-purple);
-    border: none;
-    cursor: pointer;
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    background: var(--neon-green);
 }
 
-/* Exibição de tempo (monoespaçada para alinhamento) */
+/* Display de tempo */
 .time-display {
-    margin-left: auto;         /* Empurra para a direita */
-    font-size: 12px;
-    color: var(--text-secondary);
+    margin-left: auto;
+    font-size: 14px;
     font-family: 'Courier New', monospace;
-    letter-spacing: 1px;
+    color: var(--neon-green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 2px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 15px;
+    border-radius: 20px;
 }
 
 /* ============================================
-   BARRA DE CRÉDITOS (MISA)
+   CRÉDITOS MISA - Ultra Estiloso
    ============================================ */
 .credits-bar {
     height: 40px;
-    background: linear-gradient(90deg, #0a0a14, #0d0d1a, #0a0a14);
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(0, 255, 136, 0.1), 
+        rgba(0, 229, 255, 0.1), 
+        rgba(176, 0, 255, 0.1), 
+        transparent);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top: 1px solid rgba(0, 255, 136, 0.2);
     position: relative;
-    overflow: hidden;
-}
-
-.credits-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
-    animation: scan 3s infinite;
-}
-
-@keyframes scan {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    z-index: 1;
+    backdrop-filter: blur(5px);
 }
 
 .credits-text {
-    font-size: 12px;
-    color: var(--text-secondary);
-    letter-spacing: 2px;
+    font-size: 13px;
+    font-weight: 500;
+    background: linear-gradient(135deg, 
+        var(--neon-green), 
+        var(--neon-cyan), 
+        var(--neon-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    font-weight: 300;
-    transition: all 0.3s ease;
+    animation: creditsPulse 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
 .credits-text:hover {
-    color: var(--neon-green);
-    text-shadow: var(--glow-green);
-    letter-spacing: 4px;
+    letter-spacing: 6px;
+    filter: brightness(1.2);
+}
+
+@keyframes creditsPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
 }
 
 /* ============================================
-   ESTADOS ESPECIAIS
-   Drag & drop ativo, fullscreen
+   ANIMAÇÕES ADICIONAIS
    ============================================ */
 
-/* Quando arrastando arquivo sobre a janela */
-body.dragover .app {
-    box-shadow: inset 0 0 60px rgba(0, 255, 136, 0.15);
-}
-
-body.dragover .drop-overlay {
-    background: rgba(0, 255, 136, 0.05);
-}
-
-/* Modo tela cheia: fundo preto total */
-.video-container:fullscreen {
-    background: #000;
-}
-
-.video-container:fullscreen #videoPlayer {
-    max-width: 100vw;
-    max-height: 100vh;
-}
-
-.video-container:fullscreen .controls-bar {
-    position: fixed;
-    bottom: 0;
+/* Efeito de scanline */
+.video-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
     left: 0;
-    right: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 255, 136, 0.05) 2px,
+        rgba(0, 255, 136, 0.05) 4px
+    );
+    pointer-events: none;
+    opacity: 0.5;
 }
 
-/* Responsividade para telas menores */
+/* Responsividade */
 @media (max-width: 768px) {
     .sidebar {
-        width: 250px;
-        min-width: 250px;
+        width: 280px;
+        min-width: 280px;
     }
     
     .controls-bar {
-        padding: 0 10px;
-        gap: 5px;
+        padding: 0 15px;
+        gap: 8px;
+        margin: 0 10px 10px 10px;
     }
     
-    .volume-control {
-        margin-left: 5px;
+    .time-display {
+        font-size: 11px;
+        padding: 3px 10px;
     }
     
-    input[type="range"] {
-        width: 60px;
-    }
-    
-    .credits-text {
-        font-size: 10px;
+    .video-container {
+        margin: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .sidebar {
-        width: 200px;
-        min-width: 200px;
+        width: 240px;
+        min-width: 240px;
     }
     
-    .logo {
-        font-size: 18px;
-    }
-    
-    .btn-icon {
-        font-size: 14px;
-        padding: 5px 8px;
-    }
-    
-    .time-display {
-        font-size: 10px;
+    .btn-play {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
     }
     
     .credits-text {
-        font-size: 8px;
+        font-size: 10px;
+        letter-spacing: 2px;
     }
 }
