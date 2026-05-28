@@ -2,7 +2,7 @@
    RESET & BASE
    Remove margens e paddings padrão,
    define box-sizing global e variáveis de cor
-   Produzido por: Misael
+   Produzido por: Misa
    ============================================ */
 *, *::before, *::after {
     margin: 0;
