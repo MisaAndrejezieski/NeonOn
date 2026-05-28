@@ -1,5 +1,5 @@
 /* ============================================
-   NEONON - CSS PRINCIPAL COM TEMAS
+   NEONON - CSS PRINCIPAL COM TEMAS AUTOMÁTICOS
    Dark Neon | Leve | Responsivo | Cores Dinâmicas
    Desenvolvido por Misa 💜
    ============================================ */
@@ -81,7 +81,7 @@
     --glow-accent: 0 0 8px rgba(102, 0, 204, 0.6);
 }
 
-/* Tema padrão (verde) */
+/* Garantir que o tema padrão seja verde no carregamento */
 :root {
     --neon-primary: #00ff88;
     --neon-secondary: #00ccff;
@@ -135,7 +135,7 @@ body {
     color: var(--neon-primary);
     text-shadow: var(--glow-primary);
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 /* BOTÕES */
@@ -314,6 +314,7 @@ body {
     display: block;
     margin-bottom: 20px;
     animation: pulse 2s infinite;
+    transition: all 0.5s ease;
 }
 
 @keyframes pulse {
@@ -357,7 +358,7 @@ body {
     justify-content: center;
     background: transparent;
     border: 1px solid var(--neon-primary);
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 .btn-play:hover {
@@ -375,7 +376,7 @@ body {
 .volume-icon {
     font-size: 16px;
     color: var(--neon-accent);
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 input[type="range"] {
@@ -396,7 +397,7 @@ input[type="range"]::-webkit-slider-thumb {
     background: var(--neon-accent);
     box-shadow: var(--glow-accent);
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: all 0.3s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
@@ -413,7 +414,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     background: rgba(0, 0, 0, 0.4);
     padding: 4px 12px;
     border-radius: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
 }
 
 /* CRÉDITOS */
@@ -438,25 +439,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: var(--neon-primary);
     text-shadow: var(--glow-primary);
     letter-spacing: 3px;
-}
-
-/* BOTÃO TROCA DE TEMA */
-.theme-switch-btn {
-    background: transparent;
-    border: 1px solid var(--neon-primary);
-    color: var(--neon-primary);
-    padding: 4px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 11px;
-    transition: all 0.3s ease;
-}
-
-.theme-switch-btn:hover {
-    background: var(--neon-primary);
-    color: var(--bg-deep);
-    box-shadow: var(--glow-primary);
-    transform: scale(1.05);
 }
 
 /* ESTADOS ESPECIAIS */
@@ -501,5 +483,4 @@ body.dragover .drop-overlay {
     input[type="range"] { width: 50px; }
     .time-display { font-size: 9px; padding: 2px 6px; }
     .credits-text { font-size: 9px; letter-spacing: 1px; }
-    .theme-switch-btn { font-size: 9px; padding: 3px 8px; }
 }
