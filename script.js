@@ -20,42 +20,126 @@ const btnNext = document.getElementById('btnNext');
 const btnFullscreen = document.getElementById('btnFullscreen');
 const volumeSlider = document.getElementById('volumeSlider');
 
-// --- ESTADO DA APLICAÇÃO ---
+// --- ELEMENTOS QUE TERÃO CORES MUDANDO ---
+const logoAccent = document.querySelector('.logo .accent');
+const dropIcon = document.querySelector('.drop-icon');
+const allButtons = document.querySelectorAll('.btn-icon, .btn-neon, .btn-play');
+const volumeIcon = document.querySelector('.volume-icon');
+const rangeThumb = document.querySelector('input[type="range"]');
+const activeItems = document.querySelectorAll('.video-list li.active');
+
+// --- ESTADO ---
 let mediaFiles = [];
 let currentIndex = -1;
 let autoplay = true;
 let currentFolder = null;
 let colorInterval = null;
+let currentColorIndex = 0;
 
-// Extensões suportadas
-const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
-const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.ico'];
+// --- CORES NEON (RGB para aplicar em tudo) ---
+const neonColors = [
+    { name: 'Verde', main: '#00ff88', secondary: '#00ccff', accent: '#cc66ff', glow: '0 0 10px rgba(0, 255, 136, 0.5)' },
+    { name: 'Amarelo', main: '#ffcc00', secondary: '#ffaa00', accent: '#ff8800', glow: '0 0 10px rgba(255, 204, 0, 0.5)' },
+    { name: 'Vermelho', main: '#ff3366', secondary: '#ff0044', accent: '#cc0033', glow: '0 0 10px rgba(255, 51, 102, 0.5)' },
+    { name: 'Azul', main: '#0088ff', secondary: '#0066ff', accent: '#0044cc', glow: '0 0 10px rgba(0, 136, 255, 0.5)' },
+    { name: 'Rosa', main: '#ff66cc', secondary: '#ff44bb', accent: '#cc2299', glow: '0 0 10px rgba(255, 102, 204, 0.5)' },
+    { name: 'Roxo', main: '#aa44ff', secondary: '#8822ff', accent: '#6600cc', glow: '0 0 10px rgba(170, 68, 255, 0.5)' }
+];
 
-// --- CORES NEON AUTOMÁTICAS ---
-const themes = ['green', 'yellow', 'red', 'blue', 'pink', 'purple'];
-let currentThemeIndex = 0;
-
-const themeNames = {
-    green: '💚 Verde Neon',
-    yellow: '💛 Amarelo Neon',
-    red: '❤️ Vermelho Neon',
-    blue: '💙 Azul Neon',
-    pink: '💗 Rosa Neon',
-    purple: '💜 Roxo Neon'
-};
-
-// Função que troca a cor
-function changeThemeAuto() {
-    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-    const newTheme = themes[currentThemeIndex];
-    document.documentElement.setAttribute('data-theme', newTheme);
-    console.log(`🎨 ${themeNames[newTheme]}`);
+// --- FUNÇÃO QUE MUDA TODAS AS CORES ---
+function applyColor(index) {
+    const color = neonColors[index % neonColors.length];
+    
+    // 1. Logo "On"
+    if (logoAccent) {
+        logoAccent.style.color = color.main;
+        logoAccent.style.textShadow = color.glow;
+    }
+    
+    // 2. Ícone do drop
+    if (dropIcon) {
+        dropIcon.style.color = color.main;
+        dropIcon.style.textShadow = color.glow;
+    }
+    
+    // 3. Botão Play
+    if (btnPlay) {
+        btnPlay.style.color = color.main;
+        btnPlay.style.borderColor = color.main;
+        btnPlay.style.textShadow = color.glow;
+    }
+    
+    // 4. Botão Autoplay
+    if (btnToggleAutoplay && autoplay) {
+        btnToggleAutoplay.style.color = color.main;
+        btnToggleAutoplay.style.textShadow = color.glow;
+        btnToggleAutoplay.style.borderColor = color.main;
+    }
+    
+    // 5. Botões neon em geral
+    const neonBtns = document.querySelectorAll('.btn-neon');
+    neonBtns.forEach(btn => {
+        btn.style.color = color.main;
+        btn.style.borderColor = color.main;
+    });
+    
+    // 6. Botões ícone no hover (estilo inline para garantir)
+    const iconBtns = document.querySelectorAll('.btn-icon');
+    iconBtns.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.color = color.main;
+            btn.style.borderColor = color.main;
+            btn.style.boxShadow = color.glow;
+        });
+        btn.addEventListener('mouseleave', () => {
+            if (btn !== btnPlay && btn !== btnToggleAutoplay) {
+                btn.style.color = '#8888aa';
+                btn.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                btn.style.boxShadow = 'none';
+            }
+        });
+    });
+    
+    // 7. Volume ícone
+    if (volumeIcon) {
+        volumeIcon.style.color = color.accent;
+    }
+    
+    // 8. Slider thumb
+    const style = document.createElement('style');
+    style.id = 'dynamic-thumb-style';
+    const oldStyle = document.getElementById('dynamic-thumb-style');
+    if (oldStyle) oldStyle.remove();
+    style.textContent = `input[type="range"]::-webkit-slider-thumb { background: ${color.accent}; box-shadow: 0 0 8px ${color.accent}; }`;
+    document.head.appendChild(style);
+    
+    // 9. Time display
+    if (timeDisplay) {
+        timeDisplay.style.color = color.main;
+    }
+    
+    // 10. Itens ativos na lista
+    const activeListItems = document.querySelectorAll('.video-list li.active');
+    activeListItems.forEach(item => {
+        item.style.color = color.main;
+        item.style.borderLeftColor = color.main;
+        item.style.textShadow = color.glow;
+    });
+    
+    // 11. Título da sidebar (hover dos botões)
+    console.log(`🌈 Cor atual: ${color.name} Neon`);
 }
 
-// Inicia o loop de cores (a cada 2 segundos)
+// --- FUNÇÃO QUE TROCA A COR (chamada automaticamente) ---
+function changeColor() {
+    currentColorIndex++;
+    applyColor(currentColorIndex);
+}
+
+// --- INICIA O LOOP DE CORES (a cada 2 segundos) ---
 function startAutoColor() {
     if (colorInterval) clearInterval(colorInterval);
-    colorInterval = setInterval(changeThemeAuto, 2000);
+    colorInterval = setInterval(changeColor, 2000);
 }
 
 // --- CONFIGURAÇÃO ---
@@ -70,9 +154,7 @@ function loadConfig() {
             volumeSlider.value = config.volume ?? 100;
             videoPlayer.volume = volumeSlider.value / 100;
         }
-    } catch (e) {
-        console.log('Config resetada.');
-    }
+    } catch (e) {}
 }
 
 function saveConfig() {
@@ -93,13 +175,15 @@ async function selectFolder() {
         await loadMediaFromFolder(dirHandle);
     } catch (err) {
         if (err.name !== 'AbortError') {
-            console.error('Erro:', err);
             alert('Erro ao acessar a pasta.');
         }
     }
 }
 
 // --- CARREGAR ARQUIVOS ---
+const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
+const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.ico'];
+
 async function loadMediaFromFolder(dirHandle) {
     mediaFiles = [];
     
@@ -182,7 +266,6 @@ async function playMedia(index) {
         highlightCurrentInList();
         
     } catch (err) {
-        console.error('Erro:', err);
         alert('Erro ao carregar o arquivo');
     }
 }
@@ -247,9 +330,9 @@ function toggleAutoplay() {
 
 function updateAutoplayButton() {
     if (autoplay) {
-        btnToggleAutoplay.style.color = 'var(--neon-primary)';
-        btnToggleAutoplay.style.textShadow = 'var(--glow-primary)';
-        btnToggleAutoplay.style.borderColor = 'var(--neon-primary)';
+        btnToggleAutoplay.style.color = '#00ff88';
+        btnToggleAutoplay.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
+        btnToggleAutoplay.style.borderColor = '#00ff88';
         btnToggleAutoplay.title = 'Autoplay: Ligado';
     } else {
         btnToggleAutoplay.style.color = '#8888aa';
@@ -376,10 +459,8 @@ updatePlayButton();
 updateTimeDisplay();
 
 // INICIA AS CORES AUTOMÁTICAS
+applyColor(0);
 startAutoColor();
 
-console.log('%cNeonOn %cReady - Cores Mudando Automaticamente a cada 2 segundos!',
-    'color: #00ff88; font-size: 16px;',
-    'color: #e0e0e0;');
-console.log('%cDesenvolvido por Misa 💜', 'color: #cc66ff; font-size: 12px;');
-console.log('%c🌈 As cores neon mudam sozinhas!', 'color: #ffcc00; font-size: 11px;');
+console.log('%c✨ NeonOn - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
+console.log('%c🌈 As cores neon mudam automaticamente a cada 2 segundos!', 'color: #ffcc00; font-size: 12px;');
