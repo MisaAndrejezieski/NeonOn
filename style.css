@@ -5,7 +5,9 @@
    ============================================ */
 
 /* RESET & BASE */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -17,19 +19,19 @@
     --bg-surface: #12121c;
     --bg-sidebar: #0d0d1a;
     --bg-glass: rgba(13, 13, 26, 0.95);
-    
+
     --neon-green: #00ff88;
     --neon-cyan: #00ccff;
     --neon-pink: #ff4477;
     --neon-purple: #cc66ff;
-    
+
     --text-primary: #e0e0e0;
     --text-secondary: #8888aa;
-    
+
     --glow-green: 0 0 10px rgba(0, 255, 136, 0.5);
     --glow-cyan: 0 0 10px rgba(0, 204, 255, 0.5);
     --glow-purple: 0 0 8px rgba(204, 102, 255, 0.6);
-    
+
     --sidebar-width: 300px;
     --controls-height: 56px;
 }
@@ -256,8 +258,17 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
 }
 
 .drop-content p {
@@ -404,20 +415,20 @@ body.dragover .drop-overlay {
         width: 260px;
         min-width: 260px;
     }
-    
+
     .controls-bar {
         padding: 0 12px;
         gap: 8px;
     }
-    
+
     .volume-control {
         gap: 4px;
     }
-    
+
     input[type="range"] {
         width: 60px;
     }
-    
+
     .time-display {
         font-size: 10px;
         padding: 2px 8px;
@@ -429,58 +440,58 @@ body.dragover .drop-overlay {
         width: 220px;
         min-width: 220px;
     }
-    
+
     .logo {
         font-size: 18px;
     }
-    
+
     .sidebar-header {
         padding: 12px;
     }
-    
+
     .btn-icon {
         font-size: 14px;
         padding: 6px 8px;
     }
-    
+
     .btn-neon {
         font-size: 11px;
         padding: 8px 12px;
     }
-    
+
     .folder-select {
         padding: 10px 12px;
     }
-    
+
     .video-list li {
         padding: 8px 12px;
         font-size: 11px;
     }
-    
+
     .controls-bar {
         padding: 0 8px;
         gap: 6px;
     }
-    
+
     .btn-play {
         width: 32px;
         height: 32px;
         font-size: 14px !important;
     }
-    
+
     .volume-icon {
         font-size: 12px;
     }
-    
+
     input[type="range"] {
         width: 50px;
     }
-    
+
     .time-display {
         font-size: 9px;
         padding: 2px 6px;
     }
-    
+
     .credits-text {
         font-size: 9px;
         letter-spacing: 1px;
