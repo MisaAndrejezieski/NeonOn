@@ -1,20 +1,43 @@
-# NeonOn
+# 🟢 NeonOn
 
-Player de vídeos com estética dark neon. Navegação fluida entre vídeos de uma pasta.
+Player de vídeos com estética **dark neon**. Navegação fluida entre vídeos de uma pasta.
 
-## Como usar
+![versão](https://img.shields.io/badge/versão-1.0-brightgreen)
+![licença](https://img.shields.io/badge/licença-MIT-blue)
+![feito por](https://img.shields.io/badge/feito%20por-Misa-ff69b4)
 
-1. Abra o `index.html` em um navegador moderno (Chrome, Edge, Firefox)
-2. Clique em "Selecionar Pasta" ou arraste uma pasta com vídeos
-3. Use os botões ou atalhos de teclado para navegar
+## ✨ Recursos
 
-## Atalhos
+- 🎬 Play/Pause, próximo/anterior
+- 🔊 Controle de volume persistente
+- 🔄 Autoplay (configurável)
+- 🖱️ Drag & drop de pastas
+- ⌨️ Atalhos de teclado
+- 📺 Tela cheia
+- 💾 Salva preferências (volume/autoplay)
+- 🎨 Interface com efeitos neon e animações
 
-- `Espaço` — Play/Pause
-- `Setas ← →` — Vídeo anterior/próximo
-- `Setas ↑ ↓` — Aumentar/diminuir volume
-- `F` — Tela cheia
+## 🚀 Como usar
 
-## Formatos suportados
+1. Abra o `index.html` em um navegador compatível
+2. Clique em **"Selecionar Pasta"** ou arraste uma pasta
+3. Aproveite sua playlist! 🎧
 
-MP4, WebM, OGG, MOV, AVI, MKV, WMV, FLV, M4V
+## ⌨️ Atalhos
+
+| Tecla | Ação |
+|-------|------|
+| `Espaço` | Play/Pause |
+| `← →` | Vídeo anterior/próximo |
+| `↑ ↓` | Volume +/- |
+| `F` | Tela cheia |
+
+## 📁 Formatos suportados
+
+`MP4` `WebM` `OGG` `MOV` `AVI` `MKV` `WMV` `FLV` `M4V`
+
+## ⚠️ Requisitos
+
+**Navegador moderno** (Chrome/Edge/Opera) - necessário para API de pastas.
+
+## 👩‍💻 Créditos
