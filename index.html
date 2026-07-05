@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonOn - Player de Mídia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">Neon<span class="accent">On</span></h1>
+                <button class="btn-icon" id="btnToggleAutoplay" title="Autoplay">⏭</button>
+            </div>
+            
+            <div class="folder-select">
+                <button class="btn-neon btn-full" id="btnSelectFolder">📁 Selecionar Pasta</button>
+            </div>
+            
+            <!-- Barra de Pesquisa -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar arquivos..." class="search-input">
+            </div>
+            
+            <ul class="video-list" id="videoList">
+                <li class="empty-state">Nenhum arquivo carregado</li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <span class="counter" id="videoCounter"></span>
+            </div>
+        </aside>
+        
+        <!-- Player Area -->
+        <main class="player-area">
+            <div class="video-container" id="videoContainer">
+                <video id="videoPlayer" controls></video>
+                <img id="imageViewer" style="display: none;">
+                
+                <div class="drop-overlay" id="dropOverlay">
+                    <div class="drop-content">
+                        <span class="drop-icon">▶</span>
+                        <p>Arraste uma pasta de vídeos ou imagens aqui</p>
+                        <p class="drop-sub">ou clique em "Selecionar Pasta"</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Barra de Progresso -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <div class="progress-handle" id="progressHandle"></div>
+                </div>
+            </div>
+            
+            <div class="controls-bar">
+                <button class="btn-icon" id="btnPrev" title="Anterior (←)">◄</button>
+                <button class="btn-icon btn-play" id="btnPlay" title="Play/Pause (Espaço)">▶</button>
+                <button class="btn-icon" id="btnNext" title="Próximo (→)">►</button>
+                
+                <button class="btn-icon" id="btnSpeed" title="Velocidade">1x</button>
+                
+                <div class="volume-control">
+                    <span class="volume-icon">🔊</span>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="100">
+                </div>
+                
+                <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+                
+                <button class="btn-icon" id="btnPip" title="Picture-in-Picture">⏏</button>
+                <button class="btn-icon" id="btnFullscreen" title="Tela Cheia (F)">⛶</button>
+            </div>
+        </main>
+    </div>
+    
+    <div class="credits-bar">
+        <span class="credits-text">💜 Desenvolvido por Misa 💜</span>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
