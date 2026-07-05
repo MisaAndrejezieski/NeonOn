@@ -1,230 +1,214 @@
 // ============================================
-// NOVAS FUNCIONALIDADES PROFISSIONAIS
+// NEONON - PLAYER DE MÍDIA PROFISSIONAL
+// Cada elemento neon tem sua PRÓPRIA COR!
+// Todas mudam simultaneamente!
+// Desenvolvido por Misa 💜
 // ============================================
 
-// --- NOVOS ELEMENTOS ---
-const progressBar = document.getElementById('progressBar');
-const progressFill = document.getElementById('progressFill');
-const progressHandle = document.getElementById('progressHandle');
-const btnSpeed = document.getElementById('btnSpeed');
-const btnPip = document.getElementById('btnPip');
-const searchInput = document.getElementById('searchInput');
+// --- ELEMENTOS DOM ---
+const videoPlayer = document.getElementById('videoPlayer');
+const imageViewer = document.getElementById('imageViewer');
+const videoContainer = document.getElementById('videoContainer');
+const videoList = document.getElementById('videoList');
+const dropOverlay = document.getElementById('dropOverlay');
+const videoCounter = document.getElementById('videoCounter');
+const timeDisplay = document.getElementById('timeDisplay');
 
-// --- ESTADO DE VELOCIDADE ---
-let playbackSpeed = 1;
-const speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
+const btnSelectFolder = document.getElementById('btnSelectFolder');
+const btnToggleAutoplay = document.getElementById('btnToggleAutoplay');
+const btnPrev = document.getElementById('btnPrev');
+const btnPlay = document.getElementById('btnPlay');
+const btnNext = document.getElementById('btnNext');
+const btnFullscreen = document.getElementById('btnFullscreen');
+const volumeSlider = document.getElementById('volumeSlider');
 
-// --- FUNÇÃO PARA GERAR MINIATURA ---
-async function generateThumbnail(file, index) {
-    try {
-        const fileData = await file.getFile();
-        const url = URL.createObjectURL(fileData);
-        const ext = '.' + file.name.split('.').pop().toLowerCase();
-        const isImage = imageExtensions.includes(ext);
-        
-        if (isImage) {
-            return `<img src="${url}" class="thumbnail" loading="lazy">`;
-        } else {
-            // Para vídeos, usar canvas para capturar frame
-            return new Promise((resolve) => {
-                const video = document.createElement('video');
-                video.src = url;
-                video.muted = true;
-                video.crossOrigin = 'anonymous';
-                
-                video.addEventListener('loadeddata', () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 80;
-                    canvas.height = 45;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    resolve(`<img src="${canvas.toDataURL()}" class="thumbnail" loading="lazy">`);
-                    URL.revokeObjectURL(url);
-                });
-                
-                video.load();
-            });
-        }
-    } catch (e) {
-        return `<div class="thumbnail" style="display:flex;align-items:center;justify-content:center;font-size:20px;">🎬</div>`;
-    }
-}
+// --- ELEMENTOS PARA CORES INDEPENDENTES ---
+const logoNeon = document.querySelector('.logo');
+const logoOn = document.querySelector('.logo .accent');
+const dropIcon = document.querySelector('.drop-icon');
+const volumeIcon = document.querySelector('.volume-icon');
+const allNeonBtns = document.querySelectorAll('.btn-neon');
+const autoplayBtn = document.getElementById('btnToggleAutoplay');
+const prevBtn = document.getElementById('btnPrev');
+const nextBtn = document.getElementById('btnNext');
+const fullscreenBtn = document.getElementById('btnFullscreen');
 
-// --- ATUALIZAR LISTA COM MINIATURAS ---
-async function updateMediaList() {
-    videoList.innerHTML = '';
-    if (mediaFiles.length === 0) {
-        videoList.innerHTML = '<li class="empty-state">Nenhum arquivo encontrado</li>';
-        videoCounter.textContent = '';
-        return;
-    }
-    
-    const searchTerm = searchInput.value.toLowerCase();
-    const filteredFiles = mediaFiles.filter((file, index) => {
-        return file.name.toLowerCase().includes(searchTerm);
-    });
-    
-    if (filteredFiles.length === 0) {
-        videoList.innerHTML = '<li class="empty-state">Nenhum arquivo encontrado</li>';
-        videoCounter.textContent = `${mediaFiles.length} arquivo${mediaFiles.length !== 1 ? 's' : ''}`;
-        return;
-    }
-    
-    for (let i = 0; i < filteredFiles.length; i++) {
-        const file = filteredFiles[i];
-        const originalIndex = mediaFiles.indexOf(file);
-        const li = document.createElement('li');
-        
-        const ext = '.' + file.name.split('.').pop().toLowerCase();
-        const isImage = imageExtensions.includes(ext);
-        const icon = isImage ? '🖼️' : '🎬';
-        
-        // Gerar miniatura
-        const thumbnailHTML = await generateThumbnail(file, originalIndex);
-        
-        li.innerHTML = `
-            ${thumbnailHTML}
-            <div class="file-info">
-                <div class="file-name">${file.name}</div>
-                <div class="file-duration">${isImage ? 'Imagem' : 'Vídeo'}</div>
-            </div>
-        `;
-        
-        li.addEventListener('click', () => playMedia(originalIndex));
-        if (originalIndex === currentIndex) li.classList.add('active');
-        videoList.appendChild(li);
-    }
-    
-    videoCounter.textContent = `${mediaFiles.length} arquivo${mediaFiles.length !== 1 ? 's' : ''}`;
-}
+// --- PALETA DE CORES NEON (RGB) ---
+const paletaNeon = [
+    { r: 0, g: 255, b: 136, name: 'Verde' },      // #00ff88
+    { r: 255, g: 204, b: 0, name: 'Amarelo' },     // #ffcc00
+    { r: 255, g: 51, b: 102, name: 'Vermelho' },   // #ff3366
+    { r: 0, g: 136, b: 255, name: 'Azul' },        // #0088ff
+    { r: 255, g: 102, b: 204, name: 'Rosa' },      // #ff66cc
+    { r: 170, g: 68, b: 255, name: 'Roxo' },       // #aa44ff
+    { r: 0, g: 255, b: 255, name: 'Ciano' },       // #00ffff
+    { r: 255, g: 128, b: 0, name: 'Laranja' }      // #ff8000
+];
 
-// --- BARRA DE PROGRESSO ---
-let isDragging = false;
-
-function updateProgress() {
-    if (videoPlayer.duration && !isDragging) {
-        const percent = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-        progressFill.style.width = `${percent}%`;
-        progressHandle.style.left = `${percent}%`;
-    }
-}
-
-videoPlayer.addEventListener('timeupdate', updateProgress);
-
-// Clique na barra de progresso
-progressBar.addEventListener('click', (e) => {
-    const rect = progressBar.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    videoPlayer.currentTime = x * videoPlayer.duration;
-    updateProgress();
-});
-
-// Arrastar na barra de progresso
-progressBar.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    updateProgressOnDrag(e);
-});
-
-document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-        updateProgressOnDrag(e);
-    }
-});
-
-document.addEventListener('mouseup', () => {
-    isDragging = false;
-});
-
-function updateProgressOnDrag(e) {
-    const rect = progressBar.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    progressFill.style.width = `${x * 100}%`;
-    progressHandle.style.left = `${x * 100}%`;
-    if (videoPlayer.duration) {
-        videoPlayer.currentTime = x * videoPlayer.duration;
-    }
-}
-
-// --- CONTROLE DE VELOCIDADE ---
-btnSpeed.addEventListener('click', () => {
-    const currentIndex = speedOptions.indexOf(playbackSpeed);
-    const nextIndex = (currentIndex + 1) % speedOptions.length;
-    playbackSpeed = speedOptions[nextIndex];
-    videoPlayer.playbackRate = playbackSpeed;
-    btnSpeed.textContent = `${playbackSpeed}x`;
-    saveConfig();
-});
-
-// --- PICTURE-IN-PICTURE ---
-btnPip.addEventListener('click', async () => {
-    try {
-        if (document.pictureInPictureElement) {
-            await document.exitPictureInPicture();
-        } else {
-            await videoPlayer.requestPictureInPicture();
-        }
-    } catch (e) {
-        // Fallback ou mensagem de erro
-    }
-});
-
-videoPlayer.addEventListener('enterpictureinpicture', () => {
-    btnPip.style.color = '#00ff88';
-});
-
-videoPlayer.addEventListener('leavepictureinpicture', () => {
-    btnPip.style.color = '';
-});
-
-// --- PESQUISA ---
-searchInput.addEventListener('input', updateMediaList);
-
-// --- PERSISTÊNCIA DA ÚLTIMA PASTA ---
-const LAST_FOLDER_KEY = 'neonon_last_folder';
-
-async function saveLastFolder() {
-    if (currentFolder) {
-        try {
-            localStorage.setItem(LAST_FOLDER_KEY, JSON.stringify({
-                name: currentFolder.name,
-                id: currentFolder.id
-            }));
-        } catch (e) {}
-    }
-}
-
-async function loadLastFolder() {
-    try {
-        const saved = localStorage.getItem(LAST_FOLDER_KEY);
-        if (saved) {
-            const { name, id } = JSON.parse(saved);
-            const dirs = await window.showDirectoryPicker();
-            // Verificar se é a mesma pasta
-            if (dirs.name === name) {
-                await loadMediaFromFolder(dirs);
-            }
-        }
-    } catch (e) {
-        // Não carregar automaticamente se falhar
-    }
-}
-
-// Sobrescrever loadMediaFromFolder para salvar
-const originalLoadMedia = loadMediaFromFolder;
-loadMediaFromFolder = async function(dirHandle) {
-    await originalLoadMedia(dirHandle);
-    await saveLastFolder();
+// Cada elemento começa com um índice DIFERENTE para cores diferentes!
+let colorIndex = {
+    logoNeon: 0,
+    logoOn: 1,
+    dropIcon: 2,
+    volumeIcon: 3,
+    timeDisplay: 4,
+    autoplayBtn: 5,
+    navBtns: 6,
+    neonBtns: 7,
+    playBtn: 0,
+    activeItem: 2
 };
 
-// --- SALVAR CONFIGURAÇÃO COMPLETA ---
-function saveConfig() {
-    const config = { 
-        autoplay: autoplay, 
-        volume: parseInt(volumeSlider.value),
-        speed: playbackSpeed
-    };
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+let colorInterval = null;
+
+// --- FUNÇÕES DE COR ---
+function rgbToString(r, g, b) {
+    return `rgb(${r}, ${g}, ${b})`;
 }
+
+function getGlow(r, g, b) {
+    return `0 0 10px rgba(${r}, ${g}, ${b}, 0.5)`;
+}
+
+// --- APLICA CORES INDEPENDENTES PARA CADA ELEMENTO ---
+function applyAllColors() {
+    // 1. Logo "Neon"
+    const neonColor = paletaNeon[colorIndex.logoNeon % paletaNeon.length];
+    if (logoNeon) {
+        logoNeon.style.color = rgbToString(neonColor.r, neonColor.g, neonColor.b);
+        logoNeon.style.textShadow = getGlow(neonColor.r, neonColor.g, neonColor.b);
+    }
+    
+    // 2. Logo "On"
+    const onColor = paletaNeon[colorIndex.logoOn % paletaNeon.length];
+    if (logoOn) {
+        logoOn.style.color = rgbToString(onColor.r, onColor.g, onColor.b);
+        logoOn.style.textShadow = getGlow(onColor.r, onColor.g, onColor.b);
+    }
+    
+    // 3. Ícone Drop
+    const dropColor = paletaNeon[colorIndex.dropIcon % paletaNeon.length];
+    if (dropIcon) {
+        dropIcon.style.color = rgbToString(dropColor.r, dropColor.g, dropColor.b);
+        dropIcon.style.textShadow = getGlow(dropColor.r, dropColor.g, dropColor.b);
+    }
+    
+    // 4. Ícone Volume
+    const volumeColor = paletaNeon[colorIndex.volumeIcon % paletaNeon.length];
+    if (volumeIcon) {
+        volumeIcon.style.color = rgbToString(volumeColor.r, volumeColor.g, volumeColor.b);
+    }
+    
+    // 5. Display Tempo
+    const timeColor = paletaNeon[colorIndex.timeDisplay % paletaNeon.length];
+    if (timeDisplay) {
+        timeDisplay.style.color = rgbToString(timeColor.r, timeColor.g, timeColor.b);
+        timeDisplay.style.textShadow = getGlow(timeColor.r, timeColor.g, timeColor.b);
+    }
+    
+    // 6. Botão Autoplay
+    const autoplayColor = paletaNeon[colorIndex.autoplayBtn % paletaNeon.length];
+    if (autoplayBtn) {
+        autoplayBtn.style.color = rgbToString(autoplayColor.r, autoplayColor.g, autoplayColor.b);
+        autoplayBtn.style.textShadow = getGlow(autoplayColor.r, autoplayColor.g, autoplayColor.b);
+        autoplayBtn.style.borderColor = rgbToString(autoplayColor.r, autoplayColor.g, autoplayColor.b);
+    }
+    
+    // 7. Botões Navegação (Anterior, Próximo, Tela Cheia)
+    const navColor = paletaNeon[colorIndex.navBtns % paletaNeon.length];
+    if (prevBtn) {
+        prevBtn.style.color = rgbToString(navColor.r, navColor.g, navColor.b);
+        prevBtn.style.borderColor = rgbToString(navColor.r, navColor.g, navColor.b);
+    }
+    if (nextBtn) {
+        nextBtn.style.color = rgbToString(navColor.r, navColor.g, navColor.b);
+        nextBtn.style.borderColor = rgbToString(navColor.r, navColor.g, navColor.b);
+    }
+    if (fullscreenBtn) {
+        fullscreenBtn.style.color = rgbToString(navColor.r, navColor.g, navColor.b);
+        fullscreenBtn.style.borderColor = rgbToString(navColor.r, navColor.g, navColor.b);
+    }
+    
+    // 8. Botões Neon (Selecionar Pasta)
+    const btnColor = paletaNeon[colorIndex.neonBtns % paletaNeon.length];
+    allNeonBtns.forEach(btn => {
+        btn.style.color = rgbToString(btnColor.r, btnColor.g, btnColor.b);
+        btn.style.borderColor = rgbToString(btnColor.r, btnColor.g, btnColor.b);
+    });
+    
+    // 9. Botão Play (cor diferente!)
+    const playColor = paletaNeon[colorIndex.playBtn % paletaNeon.length];
+    if (btnPlay) {
+        btnPlay.style.color = rgbToString(playColor.r, playColor.g, playColor.b);
+        btnPlay.style.borderColor = rgbToString(playColor.r, playColor.g, playColor.b);
+        btnPlay.style.textShadow = getGlow(playColor.r, playColor.g, playColor.b);
+    }
+    
+    // 10. Slider do Volume
+    const sliderColor = paletaNeon[(colorIndex.volumeIcon + 2) % paletaNeon.length];
+    let style = document.getElementById('dynamic-thumb-style');
+    if (style) style.remove();
+    style = document.createElement('style');
+    style.id = 'dynamic-thumb-style';
+    style.textContent = `input[type="range"]::-webkit-slider-thumb { 
+        background: ${rgbToString(sliderColor.r, sliderColor.g, sliderColor.b)}; 
+        box-shadow: 0 0 8px ${rgbToString(sliderColor.r, sliderColor.g, sliderColor.b)};
+        transition: all 0.2s ease;
+    }`;
+    document.head.appendChild(style);
+    
+    // 11. Itens ativos na lista
+    const activeColor = paletaNeon[colorIndex.activeItem % paletaNeon.length];
+    const activeListItems = document.querySelectorAll('.video-list li.active');
+    activeListItems.forEach(item => {
+        item.style.color = rgbToString(activeColor.r, activeColor.g, activeColor.b);
+        item.style.borderLeftColor = rgbToString(activeColor.r, activeColor.g, activeColor.b);
+        item.style.textShadow = getGlow(activeColor.r, activeColor.g, activeColor.b);
+    });
+}
+
+// --- AVANÇA TODAS AS CORES SIMULTANEAMENTE ---
+function advanceAllColors() {
+    colorIndex.logoNeon++;
+    colorIndex.logoOn++;
+    colorIndex.dropIcon++;
+    colorIndex.volumeIcon++;
+    colorIndex.timeDisplay++;
+    colorIndex.autoplayBtn++;
+    colorIndex.navBtns++;
+    colorIndex.neonBtns++;
+    colorIndex.playBtn++;
+    colorIndex.activeItem++;
+    
+    applyAllColors();
+    
+    // Log no console (opcional)
+    const currentColors = {
+        Neon: paletaNeon[colorIndex.logoNeon % paletaNeon.length].name,
+        On: paletaNeon[colorIndex.logoOn % paletaNeon.length].name,
+        Play: paletaNeon[colorIndex.playBtn % paletaNeon.length].name
+    };
+    console.log(`🎨 Neon:${currentColors.Neon} | On:${currentColors.On} | Play:${currentColors.Play}`);
+}
+
+// --- INICIA O LOOP DE CORES ---
+function startAutoColor() {
+    if (colorInterval) clearInterval(colorInterval);
+    colorInterval = setInterval(advanceAllColors, 2000); // Troca a cada 2 segundos
+}
+
+// --- ESTADO DA APLICAÇÃO ---
+let mediaFiles = [];
+let currentIndex = -1;
+let autoplay = true;
+let currentFolder = null;
+
+// Extensões suportadas
+const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.m4v'];
+const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.ico'];
+
+// --- CONFIGURAÇÃO PERSISTENTE ---
+const CONFIG_KEY = 'neonon_config';
 
 function loadConfig() {
     try {
@@ -234,14 +218,202 @@ function loadConfig() {
             autoplay = config.autoplay ?? true;
             volumeSlider.value = config.volume ?? 100;
             videoPlayer.volume = volumeSlider.value / 100;
-            playbackSpeed = config.speed ?? 1;
-            videoPlayer.playbackRate = playbackSpeed;
-            btnSpeed.textContent = `${playbackSpeed}x`;
         }
     } catch (e) {}
 }
 
-// --- ATUALIZAR ATALHOS DE TECLADO ---
+function saveConfig() {
+    const config = { autoplay: autoplay, volume: parseInt(volumeSlider.value) };
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+}
+
+// --- SELEÇÃO DE PASTA ---
+btnSelectFolder.addEventListener('click', selectFolder);
+
+async function selectFolder() {
+    try {
+        const dirHandle = await window.showDirectoryPicker();
+        currentFolder = dirHandle;
+        await loadMediaFromFolder(dirHandle);
+    } catch (err) {
+        if (err.name !== 'AbortError') alert('Erro ao acessar a pasta.');
+    }
+}
+
+async function loadMediaFromFolder(dirHandle) {
+    mediaFiles = [];
+    for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file') {
+            const ext = '.' + entry.name.split('.').pop().toLowerCase();
+            if (videoExtensions.includes(ext) || imageExtensions.includes(ext)) {
+                mediaFiles.push(entry);
+            }
+        }
+    }
+    mediaFiles.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
+    updateMediaList();
+    if (mediaFiles.length > 0) playMedia(0);
+}
+
+function updateMediaList() {
+    videoList.innerHTML = '';
+    if (mediaFiles.length === 0) {
+        videoList.innerHTML = '<li class="empty-state">Nenhum arquivo encontrado</li>';
+        videoCounter.textContent = '';
+        return;
+    }
+    mediaFiles.forEach((file, index) => {
+        const li = document.createElement('li');
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        const isImage = imageExtensions.includes(ext);
+        const icon = isImage ? '🖼️ ' : '🎬 ';
+        li.innerHTML = icon + file.name;
+        li.addEventListener('click', () => playMedia(index));
+        if (index === currentIndex) li.classList.add('active');
+        videoList.appendChild(li);
+    });
+    videoCounter.textContent = `${mediaFiles.length} arquivo${mediaFiles.length !== 1 ? 's' : ''}`;
+}
+
+async function playMedia(index) {
+    if (index < 0 || index >= mediaFiles.length) return;
+    currentIndex = index;
+    const file = mediaFiles[index];
+    try {
+        const fileData = await file.getFile();
+        const url = URL.createObjectURL(fileData);
+        if (videoPlayer.src) URL.revokeObjectURL(videoPlayer.src);
+        if (imageViewer.src) URL.revokeObjectURL(imageViewer.src);
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        const isImage = imageExtensions.includes(ext);
+        if (isImage) {
+            imageViewer.src = url;
+            imageViewer.style.display = 'block';
+            videoPlayer.style.display = 'none';
+            videoPlayer.pause();
+            timeDisplay.textContent = `🖼️ ${file.name}`;
+            btnPlay.innerHTML = '🖼️';
+        } else {
+            videoPlayer.src = url;
+            videoPlayer.style.display = 'block';
+            imageViewer.style.display = 'none';
+            videoPlayer.load();
+            videoPlayer.play();
+            updatePlayButton();
+        }
+        videoContainer.classList.add('has-video');
+        dropOverlay.style.display = 'none';
+        updateMediaList();
+        highlightCurrentInList();
+        applyAllColors(); // Reaplica cores após mudar lista
+    } catch (err) { alert('Erro ao carregar o arquivo'); }
+}
+
+function highlightCurrentInList() {
+    const items = videoList.querySelectorAll('li');
+    items.forEach((item, i) => {
+        if (i === currentIndex) {
+            item.classList.add('active');
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// --- CONTROLES ---
+btnPlay.addEventListener('click', togglePlay);
+videoPlayer.addEventListener('click', togglePlay);
+
+function togglePlay() {
+    if (imageViewer.style.display === 'block') return;
+    if (videoPlayer.paused) videoPlayer.play();
+    else videoPlayer.pause();
+    updatePlayButton();
+}
+
+function updatePlayButton() {
+    if (imageViewer.style.display === 'block') {
+        btnPlay.innerHTML = '🖼️';
+        return;
+    }
+    btnPlay.innerHTML = videoPlayer.paused ? '▶' : '❚❚';
+}
+
+btnPrev.addEventListener('click', () => {
+    if (mediaFiles.length === 0) return;
+    playMedia(currentIndex > 0 ? currentIndex - 1 : mediaFiles.length - 1);
+});
+
+btnNext.addEventListener('click', () => {
+    if (mediaFiles.length === 0) return;
+    playMedia(currentIndex < mediaFiles.length - 1 ? currentIndex + 1 : 0);
+});
+
+btnToggleAutoplay.addEventListener('click', () => {
+    autoplay = !autoplay;
+    updateAutoplayButton();
+    saveConfig();
+});
+
+function updateAutoplayButton() {
+    if (autoplay) {
+        autoplayBtn.title = 'Autoplay: Ligado';
+    } else {
+        autoplayBtn.style.color = '#8888aa';
+        autoplayBtn.style.textShadow = 'none';
+        autoplayBtn.style.borderColor = 'transparent';
+        autoplayBtn.title = 'Autoplay: Desligado';
+    }
+}
+
+videoPlayer.addEventListener('ended', () => {
+    if (autoplay && mediaFiles.length > 1) btnNext.click();
+    else updatePlayButton();
+});
+
+volumeSlider.addEventListener('input', () => {
+    videoPlayer.volume = volumeSlider.value / 100;
+    saveConfig();
+});
+
+videoPlayer.addEventListener('timeupdate', () => {
+    if (imageViewer.style.display === 'block') return;
+    timeDisplay.textContent = `${formatTime(videoPlayer.currentTime)} / ${formatTime(videoPlayer.duration)}`;
+});
+
+function formatTime(seconds) {
+    if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
+    return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+}
+
+btnFullscreen.addEventListener('click', () => {
+    document.fullscreenElement ? document.exitFullscreen() : videoContainer.requestFullscreen();
+});
+
+// --- DRAG & DROP ---
+document.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragover'); });
+document.addEventListener('dragleave', (e) => { e.preventDefault(); if (e.relatedTarget === null) document.body.classList.remove('dragover'); });
+document.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    document.body.classList.remove('dragover');
+    const items = e.dataTransfer.items;
+    if (!items) return;
+    for (const item of items) {
+        if (item.kind === 'file') {
+            const entry = await item.getAsFileSystemHandle();
+            if (entry && entry.kind === 'directory') {
+                currentFolder = entry;
+                await loadMediaFromFolder(entry);
+                return;
+            }
+        }
+    }
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('video/') || f.type.startsWith('image/'));
+    if (files.length > 0) alert('Arraste uma pasta inteira com vídeos e imagens.');
+});
+
+// --- ATALHOS DE TECLADO ---
 document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT') return;
     switch(e.key) {
@@ -249,24 +421,22 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowLeft': e.preventDefault(); btnPrev.click(); break;
         case 'ArrowRight': e.preventDefault(); btnNext.click(); break;
         case 'f': case 'F': e.preventDefault(); btnFullscreen.click(); break;
-        case 'p': case 'P': e.preventDefault(); btnPip.click(); break;
         case 'ArrowUp': e.preventDefault(); volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 5); videoPlayer.volume = volumeSlider.value / 100; saveConfig(); break;
         case 'ArrowDown': e.preventDefault(); volumeSlider.value = Math.max(0, parseInt(volumeSlider.value) - 5); videoPlayer.volume = volumeSlider.value / 100; saveConfig(); break;
-        case 's': case 'S': e.preventDefault(); btnSpeed.click(); break;
     }
 });
 
-// --- INICIALIZAÇÃO COM CARREGAMENTO AUTOMÁTICO ---
+// --- INICIALIZAÇÃO ---
 loadConfig();
 updateAutoplayButton();
 updatePlayButton();
+
+// Aplica cores iniciais
 applyAllColors();
+
+// INICIA O LOOP DE CORES (cada elemento com sua própria cor!)
 startAutoColor();
 
-// Tentar carregar última pasta
-if (window.showDirectoryPicker) {
-    loadLastFolder();
-}
-
-console.log('%c✨ NeonOn Profissional - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
-console.log('%c🚀 Novas funcionalidades: Barra de Progresso, Velocidade, PIP, Miniaturas, Pesquisa e Pasta Persistente!', 'color: #00ff88; font-size: 12px;');
+console.log('%c✨ NeonOn - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
+console.log('%c🌈 CADA ELEMENTO tem sua PRÓPRIA COR neon!', 'color: #ffcc00; font-size: 12px;');
+console.log('%c🎨 Neon, On, Play, Volume, Tempo... tudo com cores diferentes mudando juntas!', 'color: #00ff88; font-size: 11px;');
