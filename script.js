@@ -20,6 +20,7 @@ const btnPrev = document.getElementById('btnPrev');
 const btnPlay = document.getElementById('btnPlay');
 const btnNext = document.getElementById('btnNext');
 const btnFullscreen = document.getElementById('btnFullscreen');
+const btnReset = document.getElementById('btnReset');
 const volumeSlider = document.getElementById('volumeSlider');
 
 // --- ELEMENTOS PARA CORES INDEPENDENTES ---
@@ -391,6 +392,50 @@ btnFullscreen.addEventListener('click', () => {
     document.fullscreenElement ? document.exitFullscreen() : videoContainer.requestFullscreen();
 });
 
+// --- BOTÃO RESET ---
+btnReset.addEventListener('click', resetPlayer);
+
+function resetPlayer() {
+    // Confirmação antes de resetar
+    if (mediaFiles.length === 0) return;
+    
+    if (confirm('Deseja limpar a lista e recomeçar?')) {
+        // Limpa arquivos
+        mediaFiles = [];
+        currentIndex = -1;
+        
+        // Para o vídeo
+        videoPlayer.pause();
+        videoPlayer.src = '';
+        videoPlayer.style.display = 'none';
+        
+        // Limpa imagem
+        imageViewer.src = '';
+        imageViewer.style.display = 'none';
+        
+        // Reseta display
+        timeDisplay.textContent = '00:00 / 00:00';
+        btnPlay.innerHTML = '▶';
+        
+        // Mostra overlay novamente
+        dropOverlay.style.display = 'flex';
+        videoContainer.classList.remove('has-video');
+        
+        // Atualiza lista
+        updateMediaList();
+        
+        // Limpa pasta atual
+        currentFolder = null;
+        
+        // Remove pasta salva (se tiver)
+        localStorage.removeItem('neonon_last_folder');
+        
+        // Remove botão de volume colorido (se tiver)
+        const style = document.getElementById('dynamic-thumb-style');
+        if (style) style.remove();
+    }
+}
+
 // --- DRAG & DROP ---
 document.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragover'); });
 document.addEventListener('dragleave', (e) => { e.preventDefault(); if (e.relatedTarget === null) document.body.classList.remove('dragover'); });
@@ -440,3 +485,4 @@ startAutoColor();
 console.log('%c✨ NeonOn - Desenvolvido por Misa ✨', 'color: #ff66cc; font-size: 14px;');
 console.log('%c🌈 CADA ELEMENTO tem sua PRÓPRIA COR neon!', 'color: #ffcc00; font-size: 12px;');
 console.log('%c🎨 Neon, On, Play, Volume, Tempo... tudo com cores diferentes mudando juntas!', 'color: #00ff88; font-size: 11px;');
+console.log('%c🔄 Botão RESET adicionado! Clique em ⟲ para limpar e recomeçar.', 'color: #ff3366; font-size: 11px;');
