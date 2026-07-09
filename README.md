@@ -17,7 +17,8 @@ NEONON/
 Opção 1 - GitHub Pages (Recomendado)
 Faça upload dos arquivos para um repositório
 
-Ative o GitHub Pages nas configurações
+Ative o GitHub Pages nas configurações:
+https://misaandrejezieski.github.io/NeonOn/
 
 Opção 2 - Localmente
 Baixe os arquivos
