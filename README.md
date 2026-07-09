@@ -1,43 +1,126 @@
-# 🟢 NeonOn
+🎵 NeonOn - Player de Mídia Web
+Desenvolvido por Misael Andrejezieski 💜
 
-Player de vídeos com estética **dark neon**. Navegação fluida entre vídeos de uma pasta.
+📖 Sobre o Projeto
+NeonOn é um player de mídia web moderno com interface neon dinâmica. Esta é a versão 100% navegador do projeto, que pode ser hospedada no GitHub Pages ou qualquer servidor web.
 
-![versão](https://img.shields.io/badge/versão-1.0-brightgreen)
-![licença](https://img.shields.io/badge/licença-MIT-blue)
-![feito por](https://img.shields.io/badge/feito%20por-Misa-ff69b4)
+📁 Estrutura do Projeto
+text
+NEONON/
+├── index.html          # Estrutura da interface
+├── style.css           # Estilos e design neon
+├── script.js           # Lógica completa do player
+├── README.md           # Documentação
+├── .gitignore          # Arquivos ignorados
+└── .gitattributes      # Configurações do Git
+🚀 Como Usar
+Opção 1 - GitHub Pages (Recomendado)
+Faça upload dos arquivos para um repositório
 
-## ✨ Recursos
+Ative o GitHub Pages nas configurações
 
-- 🎬 Play/Pause, próximo/anterior
-- 🔊 Controle de volume persistente
-- 🔄 Autoplay (configurável)
-- 🖱️ Drag & drop de pastas
-- ⌨️ Atalhos de teclado
-- 📺 Tela cheia
-- 💾 Salva preferências (volume/autoplay)
-- 🎨 Interface com efeitos neon e animações
+Acesse: https://seuusuario.github.io/neonon/
 
-## 🚀 Como usar
+Opção 2 - Localmente
+Baixe os arquivos
 
-1. Abra o `index.html` em um navegador compatível
-2. Clique em **"Selecionar Pasta"** ou arraste uma pasta
-3. Aproveite sua playlist! 🎧
+Abra o index.html no navegador
 
-## ⌨️ Atalhos
+Pronto! O player funciona offline
 
-| Tecla | Ação |
-|-------|------|
-| `Espaço` | Play/Pause |
-| `← →` | Vídeo anterior/próximo |
-| `↑ ↓` | Volume +/- |
-| `F` | Tela cheia |
+Opção 3 - Servidor Web
+Coloque os arquivos em qualquer servidor web (Apache, Nginx, etc.)
 
-## 📁 Formatos suportados
+✨ Funcionalidades
+Funcionalidade	Descrição
+🎨 Cores Dinâmicas	Cada elemento tem sua própria cor neon
+📁 Selecionar Pasta	Carregue pastas com vídeos e imagens
+🎬 Reprodução	Suporte a vídeos e imagens
+⌨️ Atalhos	Espaço, ←/→, F, ↑/↓
+🖱️ Drag & Drop	Arraste pastas diretamente
+💾 Persistência	Salva volume e autoplay
+📱 Responsivo	Funciona em qualquer dispositivo
+🎯 Como Usar
+Clique em "📁 Selecionar Pasta" no canto superior esquerdo
 
-`MP4` `WebM` `OGG` `MOV` `AVI` `MKV` `WMV` `FLV` `M4V`
+Escolha uma pasta com vídeos ou imagens
 
-## ⚠️ Requisitos
+Clique em um arquivo da lista para reproduzir
 
-**Navegador moderno** (Chrome/Edge/Opera) - necessário para API de pastas.
+Controles na parte inferior
 
-## 👩‍💻 Créditos
+Arraste pastas para o player (drag & drop)
+
+📋 Formatos Suportados
+Tipo	Formatos
+Vídeos	MP4, WebM, OGG, MOV, AVI, MKV, WMV, FLV, M4V
+Imagens	JPG, PNG, GIF, WebP, BMP, ICO
+⌨️ Atalhos de Teclado
+Tecla	Ação
+Espaço	Play/Pause
+←	Anterior
+→	Próximo
+F	Tela Cheia
+↑	Aumentar Volume (+5%)
+↓	Diminuir Volume (-5%)
+🎨 Sistema de Cores
+Cada elemento tem sua própria cor neon que muda a cada 2 segundos:
+
+Elemento	Cor
+Logo "Neon"	Verde
+Logo "On"	Amarelo
+Ícone Drop	Vermelho
+Volume	Azul
+Display Tempo	Rosa
+Autoplay	Roxo
+Navegação	Ciano
+Play	Alterna
+📦 Tecnologias
+HTML5 - Estrutura
+
+CSS3 - Estilos e animações
+
+JavaScript (ES6+) - Lógica
+
+File System Access API - Acesso a arquivos
+
+Web Animations API - Animações
+
+📱 Compatibilidade
+Navegador	Suporte
+Chrome/Edge	✅ Completo
+Firefox	⚠️ Parcial
+Safari	⚠️ Parcial
+Opera	✅ Completo
+Nota: O showDirectoryPicker() funciona apenas no Chrome/Edge com HTTPS.
+
+🗺️ Melhorias Futuras
+Suporte a Firefox (input nativo)
+
+Playlists
+
+Tema claro
+
+Barra de pesquisa
+
+Picture-in-Picture
+
+Miniaturas de vídeo
+
+Equalizador
+
+📄 Licença
+MIT - Use e modifique livremente.
+
+👤 Desenvolvedor
+Misael Andrejezieski 💜
+
+https://img.shields.io/badge/GitHub-MisaAndrejezieski-181717?logo=github
+https://img.shields.io/badge/LinkedIn-Misael%2520Andrejezieski-0A66C2?logo=linkedin
+
+<div align="center">
+⭐ Deixe uma estrela se gostou! ⭐
+
+<sub>Feito com 💜 por Misael Andrejezieski</sub>
+
+</div>
