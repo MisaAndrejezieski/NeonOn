@@ -19,8 +19,6 @@ Faça upload dos arquivos para um repositório
 
 Ative o GitHub Pages nas configurações
 
-Acesse: https://seuusuario.github.io/neonon/
-
 Opção 2 - Localmente
 Baixe os arquivos
 
