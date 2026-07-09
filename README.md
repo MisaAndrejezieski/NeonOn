@@ -115,8 +115,7 @@ MIT - Use e modifique livremente.
 👤 Desenvolvedor
 Misael Andrejezieski 💜
 
-https://img.shields.io/badge/GitHub-MisaAndrejezieski-181717?logo=github
-https://img.shields.io/badge/LinkedIn-Misael%2520Andrejezieski-0A66C2?logo=linkedin
+https://www.linkedin.com/in/misael-andrejezieski-b4996720a/
 
 <div align="center">
 ⭐ Deixe uma estrela se gostou! ⭐
